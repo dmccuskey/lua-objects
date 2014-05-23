@@ -291,7 +291,6 @@ Object._PRINT_INCLUDE = {}
 Object._PRINT_EXCLUDE = { '__dmc_super' }
 
 
-
 -- new()
 -- class constructor
 --
@@ -368,7 +367,6 @@ function Object:print( include, exclude )
 end
 
 
-
 function Object:optimize()
 
 	function _optimize( obj, class )
@@ -398,7 +396,6 @@ function Object:deoptimize()
 end
 
 
-
 -- TODO: method can be a string or method reference
 function Object:createCallback( method )
 	if method == nil then
@@ -417,6 +414,22 @@ end
 
 local ObjectBase = inheritsFrom( Object )
 ObjectBase.NAME = "Object Base"
+
+
+--== Class Constants
+
+ObjectBase.DMC_EVENT_DISPATCH = 'dmc_event_style_dispatch'
+ObjectBase.CORONA_EVENT_DISPATCH = 'corona_event_style_dispatch'
+
+
+
+--====================================================================--
+-- Class Support Functions
+
+-- callback is either function or object (table)
+local function createEventListenerKey( e_name, callback )
+	return e_name .. "::" .. tostring( callback )
+end
 
 
 --====================================================================--
@@ -456,6 +469,8 @@ end
 --
 function ObjectBase:_initComplete()
 	-- OVERRIDE THIS
+
+	self:_setDispatchType( ObjectBase.DMC_EVENT_DISPATCH )
 end
 -- _undoInitComplete()
 -- remove any items added during _initComplete()
@@ -521,42 +536,13 @@ function ObjectBase:addEventListener( e_name, listener )
 	if not events[ e_name ] then events[ e_name ] = {} end
 	listeners = events[ e_name ]
 
-	key = self:_createEventListenerKey( e_name, listener )
+	key = createEventListenerKey( e_name, listener )
 	if listeners[ key ] then
 		print("WARNING:: ObjectBase:addEventListener, already have listener")
 	else
 		listeners[ key ] = listener
 	end
 
-end
-
-
--- dispatchEvent( event, data, params )
---
-function ObjectBase:dispatchEvent( e_type, data, params )
-	-- print( "ObjectBase:dispatchEvent", e_type );
-	params = params or {}
-	if params.merge == nil then params.merge = false end
-	--==--
-	local e
-
-	if params.merge and type( data ) == 'table' then
-		e = data
-		e.name = self.EVENT
-		e.type = e_type
-		e.target = self
-
-	else
-		e = {
-			name=self.EVENT,
-			type=e_type,
-			target=self,
-			data=data
-		}
-
-	end
-
-	self:_dispatchEvent( e )
 end
 
 
@@ -600,9 +586,43 @@ end
 --====================================================================--
 --== Private Methods
 
--- callback is either function or object (table)
-function ObjectBase:_createEventListenerKey( e_name, callback )
-	return e_name .. "::" .. tostring( callback )
+-- _corona_dispatchEvent( event, params )
+--
+function ObjectBase:_corona_dispatchEvent( event, params )
+	-- print( "ObjectBase:_corona_dispatchEvent", e_type );
+	params = params or {}
+	if params.merge == nil then params.merge = false end
+	--==--
+	self:_dispatchEvent( event )
+end
+
+
+-- _dmc_dispatchEvent( event, data, params )
+--
+function ObjectBase:_dmc_dispatchEvent( e_type, data, params )
+	-- print( "ObjectBase:_dmc_dispatchEvent", e_type );
+	params = params or {}
+	if params.merge == nil then params.merge = false end
+	--==--
+	local e
+
+	if params.merge and type( data ) == 'table' then
+		e = data
+		e.name = self.EVENT
+		e.type = e_type
+		e.target = self
+
+	else
+		e = {
+			name=self.EVENT,
+			type=e_type,
+			target=self,
+			data=data
+		}
+
+	end
+
+	self:_dispatchEvent( e )
 end
 
 
@@ -630,6 +650,19 @@ function ObjectBase:_dispatchEvent( event )
 
 		end
 	end
+end
+
+
+-- _setDispatchType
+function ObjectBase:_setDispatchType( dispatch_type )
+	-- print( "ObjectBase:_setDispatchType", dispatch_type );
+
+	if dispatch_type == ObjectBase.CORONA_EVENT_DISPATCH then
+		self.dispatchEvent = ObjectBase._corona_dispatchEvent
+	else
+		self.dispatchEvent = ObjectBase._dmc_dispatchEvent
+	end
+
 end
 
 
