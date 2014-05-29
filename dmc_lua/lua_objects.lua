@@ -54,9 +54,17 @@ local Utils = require 'lua_utils'
 
 
 --====================================================================--
--- Imports
+-- Setup, Constants
 
-local Utils = require 'lua_utils'
+-- the name of the constructor method can be changed
+-- to work with other OO frameworks
+--
+local CONSTRUCTOR_FUNC_NAME = 'new'
+
+local function setConstructorName( name )
+	assert( type(name)=='string' )
+	CONSTRUCTOR_FUNC_NAME = name
+end
 
 
 --====================================================================--
@@ -235,7 +243,7 @@ local function inheritsFrom( baseClass, options, constructor )
 
 	-- get default constructor
 	if baseClass and constructor == nil then
-		constructor = baseClass['new']	-- assuming new
+		constructor = baseClass[ CONSTRUCTOR_FUNC_NAME ]
 	end
 
 	-- create our class object
@@ -685,6 +693,7 @@ end
 --====================================================================--
 
 return {
+	setConstructorName = setConstructorName,
 	inheritsFrom = inheritsFrom,
 	ClassBase = ClassBase,
 	ObjectBase = ObjectBase
