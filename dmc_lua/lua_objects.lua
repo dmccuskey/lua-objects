@@ -421,13 +421,45 @@ ObjectBase.DMC_EVENT_DISPATCH = 'dmc_event_style_dispatch'
 ObjectBase.CORONA_EVENT_DISPATCH = 'corona_event_style_dispatch'
 
 
-
 --====================================================================--
 -- Class Support Functions
 
 -- callback is either function or object (table)
-local function createEventListenerKey( e_name, callback )
-	return e_name .. "::" .. tostring( callback )
+-- creates lookup key given event name and handler
+--
+local function createEventListenerKey( e_name, handler )
+	return e_name .. "::" .. tostring( handler )
+end
+
+
+--====================================================================--
+--== Constructor
+
+-- this is the flow for DMC-style objects
+-- typically, you won't override this
+--
+function ObjectBase:new( params )
+	params = params or {}
+	--==--
+
+	local o = self:_bless()
+
+	-- set flag if this is an Intermediate class
+	if params.__setIntermediate == true then
+		o.is_intermediate = true
+		params.__setIntermediate = nil
+	else
+		o.is_intermediate = false
+	end
+
+	o:_init( params )
+
+	-- skip these if we're an intermediate class (eg, subclass)
+	if rawget( o, 'is_intermediate' ) == false then
+		o:_initComplete()
+	end
+
+	return o
 end
 
 
@@ -485,33 +517,6 @@ end
 
 --====================================================================--
 --== Public Methods
-
--- new()
--- class constructor
---
-function ObjectBase:new( params )
-	params = params or {}
-	--==--
-
-	local o = self:_bless()
-
-	-- set flag if this is an Intermediate class
-	if params.__setIntermediate == true then
-		o.is_intermediate = true
-		params.__setIntermediate = nil
-	else
-		o.is_intermediate = false
-	end
-
-	o:_init( params )
-
-	-- skip these if we're an intermediate class (eg, subclass)
-	if rawget( o, 'is_intermediate' ) == false then
-		o:_initComplete()
-	end
-
-	return o
-end
 
 -- addEventListener()
 --
