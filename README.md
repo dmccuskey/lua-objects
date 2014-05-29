@@ -2,9 +2,7 @@
 
 A collection of Lua modules.
 
-These are modules from my DMC Corona Library. I wanted to start using these modules in a server environment, so I am pulling out the non-Corona stuff. I will later re-integrate into the Corona Library, using subclassing, etc.
-
-Some of the modules also require [Corovel](https://github.com/dmccuskey/lua-corovel) installed as well. The modules are noted below.
+These are pure Lua modules pulled out of my DMC Corona Library. I wanted to start using these in a server environment. They will later be re-integrate into the Corona Library, using subclassing, etc.
 
 
 
@@ -14,29 +12,18 @@ Some of the modules also require [Corovel](https://github.com/dmccuskey/lua-coro
 
   Advanced OOP for Lua. [Read more...](#lua_objects)
 
-* [lua_sockets](#lua_sockets)
+* [lua_patch](#lua_patch)
 
-  Buffered, non-blocking, callback- or event-based socket library for clients. *Requires Corovel* [Read more...](#lua_sockets)
-
-* [lua_utils](#lua_utils)
-
-  Miscellaneious utility functions. [Read more...](#lua_utils)
-
-
-
-## Coming Soon ##
+  Miscellaneious utility functions. [Read more...](#lua_patch)
 
 * [lua_states](#lua_states)
 
-  Implement the State Machine design pattern with your objects. [Read more...](#lua_states)
+  A mixin module which adds State Machine functionality to your objects. [Read more...](#lua_states)
 
-* [lua_wamp](#lua_wamp)
+* [lua_utils](#lua_utils)
 
-  WAMP (http://wamp.ws) module for the Corona SDK. *Requires Corovel* [Read more...](#lua_wamp)
+  Miscellaneous utility functions. [Read more...](#lua_utils)
 
-* [lua_websockets](#lua_websockets)
-
-  WebSocket module for the Corona SDK. *Requires Corovel* [Read more...](#lua_websockets)
 
 
 
@@ -47,12 +34,20 @@ This file contains several methods and object classes which together form an obj
 
 
 
-<a name="lua_sockets"></a>
-### Module: lua_sockets ###
+<a name="lua_patch"></a>
+### Module: lua_patch ###
 
-`lua_sockets` is a buffered, callback- or event-based socket library for clients which has two-flavors of sockets - asyncronous with callbacks or syncronous with events (non-blocking). In reality it's just a thin layer over the built-in socket library *LuaSockets*, but gives several additional benefits for your networking pleasure.
+`lua_patch` patches Lua with extra functionality, currently this is:
 
-Requires: Corovel
+* Python-style string formatting
+* Python-style table pop function
+
+
+
+<a name="lua_states"></a>
+### Module: lua_states ###
+
+`lua_states` mixin adds functionality to Lua objects so they can implement the State Machine design pattern.
 
 
 
