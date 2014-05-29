@@ -69,9 +69,9 @@ local Utils = {}
 -- @param method the method to call
 --
 function Utils.createObjectCallback( object, method )
-	if object == nil or method == nil then
-		error( "ERROR: missing object or method in createObjectCallback()" )
-	end
+	assert( object ~= nil, "missing object in Utils.createObjectCallback" )
+	assert( method ~= nil, "missing method in Utils.createObjectCallback" )
+
 	return function( ... )
 		return method( object, ... )
 	end
@@ -79,6 +79,9 @@ end
 
 
 function Utils.getTransitionCompleteFunc( count, callback )
+	assert( type(count)=='number' )
+	assert( type(callback)=='function' )
+
 	local total = 0
 	local func = function(...)
 		total = total + 1
