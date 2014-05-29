@@ -281,20 +281,20 @@ end
 
 
 --====================================================================--
--- Object Class
+-- Base Class
 --====================================================================--
 
-local Object = inheritsFrom( nil )
-Object.NAME = "Object Base"
+local ClassBase = inheritsFrom( nil )
+ClassBase.NAME = "Class Base"
 
-Object._PRINT_INCLUDE = {}
-Object._PRINT_EXCLUDE = { '__dmc_super' }
+ClassBase._PRINT_INCLUDE = {}
+ClassBase._PRINT_EXCLUDE = { '__dmc_super' }
 
 
 -- new()
 -- class constructor
 --
-function Object:new( options )
+function ClassBase:new( options )
 	return self:_bless()
 end
 
@@ -302,7 +302,7 @@ end
 -- _bless()
 -- interface to generic bless()
 --
-function Object:_bless( obj )
+function ClassBase:_bless( obj )
 	return bless( self, obj )
 end
 
@@ -310,8 +310,8 @@ end
 -- superCall( name, ... )
 -- call a method on an object's parent
 --
-function Object:superCall( name, ... )
-	-- print( 'Object:supercall', name, self.NAME )
+function ClassBase:superCall( name, ... )
+	-- print( 'ClassBase:supercall', name, self.NAME )
 
 	local c, s 		-- class, super
 	local result
@@ -359,7 +359,7 @@ end
 
 -- print
 --
-function Object:print( include, exclude )
+function ClassBase:print( include, exclude )
 	local include = include or self._PRINT_INCLUDE
 	local exclude = exclude or self._PRINT_EXCLUDE
 
@@ -367,7 +367,7 @@ function Object:print( include, exclude )
 end
 
 
-function Object:optimize()
+function ClassBase:optimize()
 
 	function _optimize( obj, class )
 
@@ -387,7 +387,7 @@ function Object:optimize()
 	_optimize( self, self:class() )
 end
 
-function Object:deoptimize()
+function ClassBase:deoptimize()
 	for k,v in pairs( self ) do
 		if type( v ) == "function" then
 			self[ k ] = nil
@@ -397,7 +397,7 @@ end
 
 
 -- TODO: method can be a string or method reference
-function Object:createCallback( method )
+function ClassBase:createCallback( method )
 	if method == nil then
 		error( "ERROR: missing method in createCallback()", 2 )
 	end
@@ -414,7 +414,6 @@ end
 
 local ObjectBase = inheritsFrom( Object )
 ObjectBase.NAME = "Object Base"
-
 
 --== Class Constants
 
@@ -682,6 +681,6 @@ end
 
 return {
 	inheritsFrom = inheritsFrom,
-	Object = Object,
+	ClassBase = ClassBase,
 	ObjectBase = ObjectBase
 }
