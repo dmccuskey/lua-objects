@@ -14,7 +14,7 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 
 * [lua_patch](#lua_patch)
 
-  Miscellaneious utility functions. [Read more...](#lua_patch)
+  Patch Lua with Python-cool. [Read more...](#lua_patch)
 
 * [lua_states](#lua_states)
 
