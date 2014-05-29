@@ -43,18 +43,13 @@ local VERSION = "0.2.0"
 
 
 --====================================================================--
--- Imports
-
-local Utils = require 'lua_utils'
-
-
---====================================================================--
 -- Setup, Constants
 
 local lua_patch_data = {
 	string_formatting_active = true,
 	table_pop_active = true
 }
+
 
 
 --====================================================================--
@@ -65,20 +60,38 @@ local lua_patch_data = {
 --====================================================================--
 --== Python-style string formatting
 
+-- stringFormatting()
+-- implement Python-style string replacement
+-- http://lua-users.org/wiki/StringInterpolation
+--
+local function stringFormatting( a, b )
+	if not b then
+		return a
+	elseif type(b) == "table" then
+		return string.format(a, unpack(b))
+	else
+		return string.format(a, b)
+	end
+end
+
 if lua_patch_data.string_formatting_active == true then
-	getmetatable("").__mod = Utils.stringFormatting
+	getmetatable("").__mod = stringFormatting
 end
 
 
 --====================================================================--
 --== Python-style table pop() method
 
+-- tablePop()
+--
+local function tablePop( t, v )
+	local res = t[v]
+	t[v] = nil
+	return res
+end
+
 if lua_patch_data.table_pop_active == true then
-	table.pop = function( t, v )
-		local res = t[v]
-		t[v] = nil
-		return res
-	end
+	table.pop = tablePop
 end
 
 
