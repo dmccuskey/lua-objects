@@ -34,8 +34,10 @@ SOFTWARE.
 
 
 --====================================================================--
--- DMC Lua Library : Objects
+-- DMC Lua Library : Lua Objects
 --====================================================================--
+
+
 
 -- Semantic Versioning Specification: http://semver.org/
 
@@ -43,11 +45,12 @@ local VERSION = "0.1.0"
 
 
 --====================================================================--
--- DMC Object Config
+-- Imports
 
-local DMC_OBJECTS_DEFAULTS = {
-	auto_touch_block=false,
-}
+-- 'lua_utils' is required for a couple of functions
+-- those functions can be put into this class if wanted
+--
+local Utils = require 'lua_utils'
 
 
 --====================================================================--
@@ -123,7 +126,6 @@ local function printObject( table, include, exclude, params )
 end
 
 
---
 -- indexFunc()
 -- override the normal Lua lookup functionality to allow
 -- property getter functions
@@ -227,7 +229,7 @@ local function inheritsFrom( baseClass, options, constructor )
 	local o
 
 	-- flag to indicate this is a subclass object
-	-- will be set in the constructor
+	-- will be set in the regular constructor
 	options = options or {}
 	options.__setIntermediate = true
 
@@ -244,7 +246,7 @@ local function inheritsFrom( baseClass, options, constructor )
 	end
 
 
-	-- Setup some class type functions
+	--== Setup some class-type functions
 
 	-- Return the class object of the instance
 	function o:class()
@@ -255,8 +257,6 @@ local function inheritsFrom( baseClass, options, constructor )
 	function o:superClass()
 		return baseClass
 	end
-
-
 	-- Return true if the caller is an instance of theClass
 	function o:isa( theClass )
 		local b_isa = false
