@@ -49,7 +49,7 @@ local tremove = table.remove
 
 
 --====================================================================--
--- States Object
+-- States Container
 --====================================================================--
 
 local States = {}
@@ -67,7 +67,7 @@ function States._setState( self, state )
 
 	local f = self[ state ]
 
-	assert( type(f)=='function', "\n\nERROR: missing state method '" .. tostring( state ) .. "'\n\n" )
+	assert( type(f)=='function', "\n\nERROR: Lua States :: missing state method '" .. tostring( state ) .. "'\n\n" )
 
 	self._curr_state = f
 	self._curr_state_name = state
@@ -153,7 +153,7 @@ end
 
 
 --====================================================================--
--- States Facade Object
+-- States Facade
 --====================================================================--
 
 return {
