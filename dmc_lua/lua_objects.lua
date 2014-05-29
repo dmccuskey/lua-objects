@@ -420,7 +420,7 @@ end
 -- Object Base Class
 --====================================================================--
 
-local ObjectBase = inheritsFrom( Object )
+local ObjectBase = inheritsFrom( ClassBase )
 ObjectBase.NAME = "Object Base"
 
 --== Class Constants
