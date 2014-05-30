@@ -579,14 +579,40 @@ end
 -- Web Functions
 --====================================================================--
 
+-- http://lua-users.org/wiki/StringRecipes
+function Utils.urlEncode( str )
+	assert( type(str)=='string', "Utils.parseQuery: input not a string" )
 
--- parse_query()
+	str = string.gsub (str, "+", " ")
+	str = string.gsub (str, "%%(%x%x)",
+		function(h) return string.char(tonumber(h,16)) end)
+	str = string.gsub (str, "\r\n", "\n")
+	return str
+end
+
+-- http://lua-users.org/wiki/StringRecipes
+function Utils.urlEncode( str )
+	assert( type(str)=='string', "Utils.parseQuery: input not a string" )
+
+	if (str) then
+		str = string.gsub (str, "\n", "\r\n")
+		str = string.gsub (str, "([^%w %-%_%.%~])",
+				function (c) return string.format ("%%%02X", string.byte(c)) end)
+		str = string.gsub (str, " ", "+")
+	end
+	return str
+end
+
+
+-- parseQuery()
 -- splits an HTTP query string (eg, 'one=1&two=2' ) into its components
 --
 -- @param  str  string containing url-type key/value pairs
 -- @returns a table with the key/value pairs
 --
-function Utils.parse_query( str )
+function Utils.parseQuery( str )
+	assert( type(str)=='string', "Utils.parseQuery: input not a string" )
+
 	local t = {}
 	if str ~= nil then
 		for k, v in string.gmatch( str, "([^=&]+)=([^=&]+)") do
@@ -596,11 +622,20 @@ function Utils.parse_query( str )
 	return t
 end
 
-function Utils.create_query( tbl )
+-- createQuery()
+-- creates query string from table items
+--
+-- @param tbl table as dictionary
+-- returns query string
+--
+function Utils.createQuery( tbl )
+	assert( type(tbl)=='table', "Utils.createQuery: input not a table" )
+
+	local encode = Utils.urlEncode
 	local str = ''
 	for k,v in pairs( tbl ) do
 		if str ~= '' then str = str .. '&' end
-		str = str .. tostring( k ) .. '=' .. url_encode( tostring(v) )
+		str = str .. tostring( k ) .. '=' .. encode( tostring(v) )
 	end
 	return str
 end
