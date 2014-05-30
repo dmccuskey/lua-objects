@@ -35,8 +35,6 @@ DEALINGS IN THE SOFTWARE.
 -- DMC Lua Library : Lua Patch
 --====================================================================--
 
-
-
 -- Semantic Versioning Specification: http://semver.org/
 
 local VERSION = "0.2.0"
