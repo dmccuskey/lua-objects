@@ -34,7 +34,7 @@ SOFTWARE.
 
 
 --====================================================================--
--- DMC Lua Library : Utils
+-- DMC Lua Library : Lua Utils
 --====================================================================--
 
 -- Semantic Versioning Specification: http://semver.org/
@@ -87,7 +87,6 @@ end
 --====================================================================--
 -- Date Functions
 --====================================================================--
-
 
 --[[
 
@@ -153,7 +152,6 @@ end
 -- Image Functions
 --====================================================================--
 
-
 -- imageScale()
 -- container, image - table with width/height keys
 -- returns scale
@@ -187,7 +185,6 @@ end
 --====================================================================--
 -- JSON/Lua Functions
 --====================================================================--
-
 
 --[[
 These functions fix the issue that arises when working with JSON and
@@ -258,7 +255,6 @@ end
 -- Math Functions
 --====================================================================--
 
-
 function Utils.getUniqueRandom( include, exclude )
 	--print( "Utils.getUniqueRandom" )
 
@@ -311,7 +307,6 @@ end
 -- String Functions
 --====================================================================--
 
-
 -- split string up in parts, using separator
 -- returns array of pieces
 function Utils.split( str, sep )
@@ -346,7 +341,6 @@ end
 --====================================================================--
 -- Table Functions
 --====================================================================--
-
 
 -- destroy()
 -- Deletes all of the items in a table structure.
