@@ -570,7 +570,7 @@ function ObjectBase:removeEventListener( e_name, listener )
 		print("WARNING:: ObjectBase:removeEventListener, no listeners found")
 	end
 
-	key = self:_createEventListenerKey( e_name, listener )
+	key = createEventListenerKey( e_name, listener )
 
 	if not listeners[ key ] then
 		print("WARNING:: ObjectBase:removeEventListener, listener not found")
