@@ -46,9 +46,42 @@ local VERSION = "0.2.0"
 -- Setup, Constants
 
 local lua_patch_data = {
-	string_formatting_active = true,
-	table_pop_active = true
+	string_format_active = false,
+	table_pop_active = false
 }
+
+local PATCH_TABLE_POP = 'table-pop'
+local PATCH_STRING_FORMAT = 'string-format'
+local doTablePopPatch, doStringFormatPatch
+
+
+--====================================================================--
+--== Support Function
+
+local function addPatch( input )
+
+	if type(input)=='table' then
+		-- pass
+	elseif type(input)=='string' then
+		input = { input }
+	elseif type(input)=='nil' then
+		input = { PATCH_TABLE_POP, PATCH_STRING_FORMAT }
+	else
+		error("Lua Patch:: unknown patch type '" .. type(input) .. "'" )
+	end
+
+	for i, patch_name in ipairs( input ) do
+		if patch_name == PATCH_TABLE_POP then
+			doTablePopPatch()
+
+		elseif patch_name == PATCH_STRING_FORMAT then
+			doStringFormatPatch()
+
+		else
+			error("Lua Patch:: unknown patch name '" .. tostring( patch ) .. "'" )
+		end
+	end
+end
 
 
 
@@ -74,8 +107,12 @@ local function stringFormatting( a, b )
 	end
 end
 
-if lua_patch_data.string_formatting_active == true then
-	getmetatable("").__mod = stringFormatting
+doStringFormatPatch = function()
+	if not lua_patch_data.string_format_active then
+		print( "Lua Patch::activating patch '" .. PATCH_STRING_FORMAT .. "'" )
+		getmetatable("").__mod = stringFormatting
+		lua_patch_data.string_format_active = true
+	end
 end
 
 
@@ -90,10 +127,13 @@ local function tablePop( t, v )
 	return res
 end
 
-if lua_patch_data.table_pop_active == true then
-	table.pop = tablePop
+doTablePopPatch = function()
+	if not lua_patch_data.table_pop_active then
+		print( "Lua Patch::activating patch '" .. PATCH_TABLE_POP .. "'" )
+		table.pop = tablePop
+		lua_patch_data.table_pop_active = true
+	end
 end
-
 
 
 
@@ -101,6 +141,4 @@ end
 -- Patch Facade
 --====================================================================--
 
-return {
-	-- future facade
-}
+return addPatch
