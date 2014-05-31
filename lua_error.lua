@@ -42,7 +42,11 @@ local VERSION = "0.1.0"
 --====================================================================--
 -- Imports
 
-local Objects = require( dmc_lib_func.find('dmc_objects') )
+local Objects = require 'lua_objects'
+
+
+--====================================================================--
+-- Setup, Constants
 
 -- setup some aliases to make code cleaner
 local inheritsFrom = Objects.inheritsFrom
