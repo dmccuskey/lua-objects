@@ -243,11 +243,13 @@ end
 --== read/write JSONFile() ==--
 
 function File.convertLuaToJson( lua_data )
+	assert( json ~= nil, 'JSON library not loaded' )
 	assert( type(lua_data)=='table' )
 	--==--
 	return json.encode( lua_data )
 end
 function File.convertJsonToLua( json_str )
+	assert( json ~= nil, 'JSON library not loaded' )
 	assert( type(json_str)=='string' )
 	assert( #json_str > 0 )
 	--==--
@@ -282,8 +284,8 @@ function File.getLineType( line )
 	--==--
 	local is_section, is_key = false, false
 	if #line > 0 then
-		is_section = ( string.find( line, '%[%w', 1, false ) == 1 )
-		is_key = ( string.find( line, '%w', 1, false ) == 1 )
+		is_section = ( string.find( line, '%[%u', 1, false ) == 1 )
+		is_key = ( string.find( line, '%u', 1, false ) == 1 )
 	end
 	return is_section, is_key
 end
@@ -293,7 +295,7 @@ function File.processSectionLine( line )
 	assert( type(line)=='string' )
 	assert( #line > 0 )
 	--==--
-	local key = line:match( "%[([%w_]+)%]" )
+	local key = line:match( "%[([%u_]+)%]" )
 	assert( type(key) ~= 'nil' )
 	return string.lower( key ) -- use only lowercase inside of module
 end
@@ -304,8 +306,8 @@ function File.processKeyLine( line )
 	assert( #line > 0 )
 	--==--
 
-	-- split up line
-	local raw_key, raw_val = line:match( "([%w_:]+)%s*=%s*(.-)%s*$" )
+	-- split up line into key/value
+	local raw_key, raw_val = line:match( "([%u_:]+)%s*=%s*(.-)%s*$" )
 
 	-- split up key parts
 	local keys = {}
@@ -313,9 +315,9 @@ function File.processKeyLine( line )
 		table.insert( keys, #keys+1, k )
 	end
 
+	-- trim off quotes, make sure balanced
 	local q1, q2, trim
 	q1, trim, q2 = raw_val:match( "^(['\"]?)(.-)(['\"]?)$" )
-
 	assert( q1 == q2, "quotes must match" )
 
 	-- process key and value
@@ -344,6 +346,7 @@ function File.processKeyName( name )
 	--==--
 	return string.lower( name ) -- use only lowercase inside of module
 end
+-- allows nil to be passed in
 function File.processKeyType( name )
 	-- print( "File.processKeyType", name )
 	--==--
