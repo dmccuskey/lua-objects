@@ -5,6 +5,26 @@ local File = require 'lua_files'
 
 describe( "Module Test: lua_files.lua", function()
 
+	describe("Tests for read/write JSON File", function()
+
+		it( "File.convertJsonToLua", function()
+			local j 
+			j = File.convertJsonToLua( '{ "hello":123 }' )
+			assert.is.equal( j.hello, 123 )
+
+			--== Invalid 
+
+			assert.has.errors( function() File.convertJsonToLua( {} ) end )
+			assert.has.errors( function() File.convertJsonToLua( "" ) end )
+
+			-- double quotes
+			assert.has.errors( function() File.convertJsonToLua( "{ 'hello':123 }" ) end )
+			-- equals sign
+			assert.has.errors( function() File.convertJsonToLua( '{ "hello"=123 }' ) end )
+
+		end)
+
+	end)
 
 	describe("Tests for readingConfigFile", function()
 

@@ -99,14 +99,13 @@ end
 
 -- item is a path
 function File._removeFile( f_path, f_options )
-		local success, msg = os.remove( f_path )
-		if not success then
-			print( "ERROR: removing " .. f_path )
-			print( "ERROR: " .. msg )
-		end
+	assert( os.remove( f_path ) )
 end
 
 function File._removeDir( dir_path, dir_options )
+	assert( lsf ~= nil, 'Lua File System (lfs) not loaded' )
+	--==--
+
 	for f_name in lfs.dir( dir_path ) do
 		if f_name == '.' or f_name == '..' then
 			-- skip system files
