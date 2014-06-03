@@ -45,6 +45,8 @@ local VERSION = "0.1.0"
 --====================================================================--
 -- Setup, Constants
 
+local slower = string.lower
+
 local tconcat = table.concat
 local tinsert = table.insert
 
@@ -620,6 +622,24 @@ function Utils.createHttpRequest( params )
 	return tconcat( req_t, "\r\n" )
 end
 
+
+function Utils.normalizeHeaders( headers, params )
+	params = params or {}
+	params.case = params.case or 'lower' -- camel, lower
+	--==--
+	local h = {}
+	local f
+	if false and params.case == 'camel' then
+		f = nil -- TODO
+	else
+		f = string.lower
+	end
+	for k,v in pairs( headers ) do
+		print(k,v)
+		h[ f(k) ] = v
+	end
+	return h
+end
 
 -- http://lua-users.org/wiki/StringRecipes
 function Utils.urlDecode( str )
