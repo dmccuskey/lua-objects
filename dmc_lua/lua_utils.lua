@@ -596,7 +596,7 @@ end
 --====================================================================--
 
 function Utils.createHttpRequest( params )
-	print( "Utils.createHttpRequest")
+	-- print( "Utils.createHttpRequest")
 	params = params or {}
 	--==--
 	local http_params = params.http_params
@@ -607,7 +607,7 @@ function Utils.createHttpRequest( params )
 
 	if type( http_params.headers ) == 'table' then
 		for k,v in pairs( http_params.headers ) do
-			tinsert( req_t, #req_t+1, "%s: %s" % { k, v } )
+			tinsert( req_t, #req_t+1, "%s:%s" % { k, v } )
 		end
 	end
 
@@ -617,7 +617,6 @@ function Utils.createHttpRequest( params )
 	end
 	tinsert( req_t, #req_t+1, "\r\n" )
 
-	print( tconcat( req_t, "\r\n" ) )
 	return tconcat( req_t, "\r\n" )
 end
 
