@@ -8,6 +8,18 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 
 ## Current Modules ##
 
+* [lua_e4x](#lua_e4x)
+
+  Pure Lua E4X XML parser. [Read more...](#lua_e4x)
+
+* [lua_errors](#lua_errors)
+
+  Better error handling for Lua. [Read more...](#lua_errors)
+
+* [lua_files](#lua_files)
+
+  File tasks, handling json, config files. [Read more...](#lua_files)
+
 * [lua_objects](#lua_objects)
 
   Advanced OOP for Lua. [Read more...](#lua_objects)
@@ -15,6 +27,10 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 * [lua_patch](#lua_patch)
 
   Patch Lua with Python-cool. [Read more...](#lua_patch)
+
+* [lua_promise](#lua_promise)
+
+  Deferreds and Promises for Lua. [Read more...](#lua_promise)
 
 * [lua_states](#lua_states)
 
