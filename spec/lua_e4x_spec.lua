@@ -7,7 +7,7 @@ local Utils = require 'lua_utils'
 
 describe( "Module Test: lua_e4x.lua", function()
 
-	describe("Traversing XML", function()
+	describe("Test XML Node", function()
 
 		local xml
 
@@ -42,10 +42,50 @@ describe( "Module Test: lua_e4x.lua", function()
 			assert.is.equal( #(xml.book[1]:children()), 3 )
 
 			assert.is.equal( xml.book[1].title[1]:toString(), 'Baking Extravagant Pastries with Kumquats' )
+			assert.is.equal( xml.book[1].title[1]:toXmlString(), '<title>Baking Extravagant Pastries with Kumquats</title>' )
+			assert.is.equal( xml.book[1].title[1]:hasComplexContent(), false )
+			assert.is.equal( xml.book[1].title[1]:hasSimpleContent(), true )
+
+			assert.is.equal( xml.book[1].author[1]:toString(), '<lastName>Contino</lastName><firstName>Chuck</firstName>' )
 
 		end)
 
 
 	end)
+
+
+	describe("Traversing Attributes", function()
+
+		local xml
+
+		setup( function()
+			local data_file = './spec/xml/test-01.xml'
+			data = File.readFile( data_file, {lines=false})
+			xml = XML.parse( data )
+		end)
+
+		teardown( function()
+		end)
+
+		before_each( function()
+		end)
+
+		after_each( function()
+		end)
+
+		it( "attribute() method", function()
+			assert.is.equal( xml.book[1]:attribute('ISBN'), '0942407296' )
+			assert.is.equal( xml.book[1]:attribute('one'), nil )
+		end)
+
+		it( "ampersand method", function()
+			assert.is.equal( xml.book[1]['@ISBN'], '0942407296' )
+			assert.is.equal( xml.book[1]['@one'], nil )
+		end)
+
+
+	end)
+
+
 end)
 
