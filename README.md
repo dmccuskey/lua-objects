@@ -47,12 +47,17 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 
 An implementation of E4X for Lua.
 
-Documentation and Examples
+
+**Documentation**
 
 http://docs.davidmccuskey.com/display/docs/lua_e4x.lua
 
-There are a lot of examples in the unit test for `lua_e4x.lua`. Look in `spec/lua_e4x_spec.lua`.
 
+**Examples**
+
+There are a lot of examples in the unit test file, `spec/lua_e4x_spec.lua`.
+
+There is also a micro example on the documentation website.
 
 
 <a name="lua_objects"></a>
