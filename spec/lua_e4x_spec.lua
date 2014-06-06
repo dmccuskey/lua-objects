@@ -2,7 +2,6 @@ package.path = './dmc_lua/?.lua;' .. package.path
 
 local XML = require 'lua_e4x'
 local File = require 'lua_files'
-local Utils = require 'lua_utils'
 
 
 describe( "Module Test: lua_e4x.lua", function()
@@ -18,7 +17,7 @@ describe( "Module Test: lua_e4x.lua", function()
 		end)
 
 
-		it( "method: dot traversal", function()
+		it( "method: dot traversal", function()			
 			assert.is.equal( xml.book:isa(XML.XmlListClass), true )
 			assert.is.equal( xml.book.title:isa( XML.XmlListClass ), true )
 		end)
@@ -75,6 +74,8 @@ describe( "Module Test: lua_e4x.lua", function()
 		it( "Test XMLNode", function()
 
 			assert.is.equal( xml.book[3], nil )
+
+			assert.is.equal( xml.book[1]:isa( XML.XmlNodeClass ), true )
 
 			assert.is.equal( xml.book[1]:name(), 'book' )
 			assert.is.equal( xml:child('book')[1]:name(), 'book' )

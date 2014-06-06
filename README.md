@@ -42,6 +42,18 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 
 
 
+<a name="lua_e4x"></a>
+### Module: lua_e4x ###
+
+An implementation of E4X for Lua.
+
+Documentation and Examples
+
+http://docs.davidmccuskey.com/display/docs/lua_e4x.lua
+
+There are a lot of examples in the unit test for `lua_e4x.lua`. Look in `spec/lua_e4x_spec.lua`.
+
+
 
 <a name="lua_objects"></a>
 ### Module: lua_objects ###
