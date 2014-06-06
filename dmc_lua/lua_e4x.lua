@@ -50,15 +50,54 @@ local VERSION = "0.1.0"
 -- Setup, Constants
 
 -- forward declare
-local XmlBase, XmlList
-local XmlDocNode, XmlDecNode, XmlNode, XmlTextNode, XmlAttrNode
+local XmlListBase, XmlList
+local XmlBase, XmlDocNode, XmlDecNode, XmlNode, XmlTextNode, XmlAttrNode
 
+local tconcat = table.concat
+local tinsert = table.insert
+local tremove = table.remove
+
+local Utils = require 'lua_utils'
 
 --====================================================================--
 -- Support Functions
 
 local function createXmlList()
 	return XmlList()
+end
+
+
+-- http://lua-users.org/wiki/FunctionalLibrary
+
+-- filter(function, table)
+-- e.g: filter(is_even, {1,2,3,4}) -> {2,4}
+function filter(func, tbl)
+	local xlist= XmlList()
+	for i,v in ipairs(tbl) do
+		if func(v) then
+			xlist:addNode(v)
+		end
+	end
+	return xlist
+end
+
+-- map(function, table)
+-- e.g: map(double, {1,2,3})    -> {2,4,6}
+function map(func, tbl)
+	local xlist= XmlList()
+		for i,v in ipairs(tbl) do
+			xlist:addNode( func(v) )
+		end
+		return xlist
+end
+
+-- foldr(function, default_value, table)
+-- e.g: foldr(operator.mul, 1, {1,2,3,4,5}) -> 120
+function foldr(func, val, tbl)
+	for i,v in pairs(tbl) do
+		val = func(val, v)
+	end
+	return val
 end
 
 
@@ -79,35 +118,57 @@ local function decodeXmlString(value)
 	return value
 end
 
--- local function encodeXmlString(value)
--- 	value = string.gsub(value, "&#x([%x]+)%;",
--- 		function(h)
--- 			return string.char(tonumber(h, 16))
--- 		end)
--- 	value = string.gsub(value, "&#([0-9]+)%;",
--- 		function(h)
--- 				return string.char(tonumber(h, 10))
--- 		end)
--- 	value = string.gsub(value, "&quot;", "\"")
--- 	value = string.gsub(value, "&apos;", "'")
--- 	value = string.gsub(value, "&gt;", ">")
--- 	value = string.gsub(value, "&lt;", "<")
--- 	value = string.gsub(value, "&amp;", "&")
--- 	return value
--- end
-
+function encodeXmlString(value)
+	value = string.gsub(value, "&", "&amp;"); -- '&' -> "&amp;"
+	value = string.gsub(value, "<", "&lt;"); -- '<' -> "&lt;"
+	value = string.gsub(value, ">", "&gt;"); -- '>' -> "&gt;"
+	value = string.gsub(value, "\"", "&quot;"); -- '"' -> "&quot;"
+	value = string.gsub(value, "([^%w%&%;%p%\t% ])",
+		function(c)
+			return string.format("&#x%X;", string.byte(c))
+		end);
+	return value;
+end
 
 
 --====================================================================--
--- XML Setup
+-- XML Class Support
 
--- indexFunc()
--- override the normal Lua lookup functionality to allow
--- special lookup functionality
---
--- @param t object table
--- @param k key
---
+local function listIndexFunc( t, k )
+	-- print( "listIndexFunc", t, k )
+
+	local o, val, f
+
+	-- check if search for attribute with '@'
+	if string.sub(k,1,1) == '@' then
+		local _,_, name = string.find(k,'^@(.*)$')
+		val = t:attribute(name)
+	end
+	if val ~= nil then return val end
+
+	-- -- check for key directly on object
+	-- val = rawget( t, k )
+	-- if val ~= nil then return val end
+
+	-- check OO hierarchy
+	o = rawget( t, '__super' )
+	if o then val = o[k] end
+	if val ~= nil then return val end
+
+	-- check for key in nodes
+	local nodes = rawget( t, '__nodes' )
+	if nodes and type(k)=='number' then
+		val = nodes[k]
+	elseif nodes and type(k)=='string' then
+		val = t:child(k)
+	end
+	if val ~= nil then return val end
+
+	return nil
+end
+
+
+
 local function indexFunc( t, k )
 	-- print( "indexFunc", t, k )
 
@@ -115,17 +176,8 @@ local function indexFunc( t, k )
 
 	-- check if search for attribute with '@'
 	if string.sub(k,1,1) == '@' then
-		local attrs = rawget( t, '__attrs' )
 		local _,_, name = string.find(k,'^@(.*)$')
-		if attrs then
-			for key, value in pairs( attrs ) do
-				-- print( '>>', name, key, value )
-				if key == name then
-					val = value
-					break
-				end
-			end
-		end
+		val = t:attribute(name)
 	end
 	if val ~= nil then return val end
 
@@ -142,7 +194,7 @@ local function indexFunc( t, k )
 	local children = rawget( t, '__children' )
 	if children then
 		for i,node in ipairs( children ) do
-			-- print( '>>', i,node, node:name())
+			-- print( '===>>', i,node, node.NAME)
 			if node:name() == k then
 				if val == nil then
 					val = createXmlList()
@@ -162,20 +214,22 @@ local function toStringFunc( t )
 end
 
 
-local function bless( base, obj )
-	-- print( "bless", base )
+local function bless( base, params )
+	params = params or {}
+	--==--
 	local o = obj or {}
 	local mt = {
-		__index = indexFunc,
-		__newindex = newindexFunc,
-		-- __tostring = toStringFunc
+		-- __index = indexFunc,
+		__index = params.indexFunc,
+		__newindex = params.newIndexFunc,
+		__tostring = params.toStringFunc,
+		__len = function() error( "hrererer") end
 	}
+	setmetatable( o, mt )
+
 	if base and base.new and type(base.new)=='function' then
-		-- print("adding call")
 		mt.__call = base.new
 	end
-
-	setmetatable( o, mt )
 
 	o.__super = base
 
@@ -183,11 +237,18 @@ local function bless( base, obj )
 end
 
 
-local function inheritsFrom( base_class, options, constructor )
+local function inheritsFrom( base_class, params, constructor )
+	params = params or {}
+	params.indexFunc = params.indexFunc or indexFunc
 
 	local o
 
-	o = bless( base_class )
+	-- if base_class and base_class.toString and type(base_class.toString)=='function' then
+	-- 	params.toStringFunc = base_class.toString
+	-- end
+
+
+	o = bless( base_class, params )
 
 	-- Return the class object of the instance
 	function o:class()
@@ -219,10 +280,108 @@ local function inheritsFrom( base_class, options, constructor )
 end
 
 
+
+--====================================================================--
+-- XML List Base
+
+XmlListBase = inheritsFrom( nil )
+
+function XmlListBase:new( params )
+	-- print("XmlListBase:new")
+	local o = self:_bless()
+	if o._init then o:_init( params ) end
+	return o
+end
+function XmlListBase:_bless( obj )
+	-- print("XmlListBase:_bless")
+	local p = {
+		indexFunc=listIndexFunc,
+		newIndexFunc=listNewIndexFunc,
+	}
+	return bless( self, p )
+end
+
+
+--====================================================================--
+-- XML List
+
+XmlList = inheritsFrom( XmlListBase )
+XmlList.NAME = 'XML List'
+
+function XmlList:_init( params )
+	-- print("XmlList:_init")
+	self.__nodes = {}
+end
+function XmlList:addNode( node )
+	-- print( "XmlList:addNode", node.NAME  )
+	assert( node ~= nil, "XmlList:addNode, node can't be nil" )
+
+	local nodes = rawget( self, '__nodes' )
+	if not node:isa( XmlList ) then
+		tinsert( nodes, node )
+	else
+		-- process XML List
+		for i,v in node:nodes() do
+			-- print('dd>> ', i,v, v.NAME)
+			tinsert( nodes, v )
+		end
+	end
+end
+
+function XmlList:child( name )
+	-- print( "XmlList:child", name  )
+	local nodes, func, result
+	result = XmlList()
+	for _, node in self:nodes() do
+		result:addNode( node:child( name ) )
+	end
+	return result
+end
+
+function XmlList:length()
+	local nodes = rawget( self, '__nodes' )
+	return #nodes
+end
+function XmlList:attribute( key )
+	-- print( "XmlList:attribute", key  )
+	local nodes, func, result
+	result = XmlList()
+	for _, node in self:nodes() do
+		result:addNode( node:attribute( key ) )
+	end
+
+	return result
+end
+
+-- iterator, used in for X in ...
+function XmlList:nodes()
+	local pos = 1
+	local nodes = rawget( self, '__nodes' )
+	return function()
+		while pos <= #nodes do
+			local val = nodes[pos]
+			local i = pos
+			pos=pos+1
+			return i, val
+		end
+		return nil, nil
+	end
+end
+
+function XmlList:toString()
+	-- error("error XmlList:toString")
+	local nodes = rawget( self, '__nodes' )
+	if #nodes == 0 then return nil end 
+	local func = function( val, node )
+		return val .. node:toString()
+	end
+	return foldr( func, "", nodes )
+end 
+
 --====================================================================--
 -- XML Base
 
-local XmlBase = inheritsFrom( nil )
+XmlBase = inheritsFrom( nil )
 
 function XmlBase:new( params )
 	-- print("XmlBase:new")
@@ -232,20 +391,11 @@ function XmlBase:new( params )
 end
 function XmlBase:_bless( obj )
 	-- print("XmlBase:_bless")
-	return bless( self, obj )
-end
-
-
---====================================================================--
--- XML List
-
-XmlList = inheritsFrom( XmlBase )
-
-function XmlList:_init( params )
-	-- print("XmlList:_init")
-end
-function XmlList:addNode( node )
-	table.insert( self, node )
+	local p = {
+		indexFunc=indexFunc,
+		newIndexFunc=nil,
+	}
+	return bless( self, p )
 end
 
 
@@ -253,6 +403,7 @@ end
 -- XML Declaration Node
 
 XmlDecNode = inheritsFrom( XmlBase )
+XmlDecNode.NAME = 'XML Node'
 
 function XmlDecNode:_init( params )
 	-- print("XmlDecNode:_init")
@@ -271,6 +422,7 @@ end
 -- XML Node
 
 XmlNode = inheritsFrom( XmlBase )
+XmlNode.NAME = 'XML Node'
 
 function XmlNode:_init( params )
 	-- print("XmlNode:_init")
@@ -284,14 +436,47 @@ function XmlNode:_init( params )
 end
 
 
+function XmlNode:parent()
+	return rawget( self, '__parent' )
+end
+
 function XmlNode:addAttribute( name, value )
 	self.__attrs[ name ] = value
 end
+
+-- return XmlList
 function XmlNode:attribute( name )
-	return self.__attrs[ name ]
+	print("XmlNode:attribute", name )
+	if name == '*' then return self:attributes() end 
+	local attrs = rawget( self, '__attrs' )
+	local result = XmlList()
+	local attr = attrs[ name ]
+	if attr then
+		result:addNode( attr )
+	end
+	return result
 end
 function XmlNode:attributes()
-	return self.__attrs
+	local attrs = rawget( self, '__attrs' )
+	local result = XmlList()
+	for k,attr in pairs(attrs) do
+		print(k,attr)
+		result:addNode( attr )
+	end
+	return result
+end
+
+-- hasOwnProperty("@ISBN") << attribute
+-- hasOwnProperty("author") << element
+-- returns boolean
+function XmlNode:hasOwnProperty( key )
+	print("has own property", key)
+	if string.sub(key,1,1) == '@' then
+		local _,_, name = string.find(key,'^@(.*)$')
+		return ( self:attribute(name):length() > 0 )
+	else
+		return ( self:child(key):length() > 0 )
+	end
 end
 
 
@@ -309,6 +494,10 @@ function XmlNode:hasComplexContent()
 	return not self:hasSimpleContent()
 end
 
+function XmlNode:length()
+	return 1
+end
+
 
 function XmlNode:name()
 	return self.__name
@@ -321,24 +510,20 @@ end
 function XmlNode:addChild( node )
 	table.insert( self.__children, node )
 end
-function XmlNode:child( value )
-	-- print("XmlNode:child", self, value )
-	local list
-
-	for i, node in ipairs( self.__children ) do
-		-- print(i,node:name())
-		if node:name() == value then
-			if list == nil then
-				list = createXmlList()
-			end
-			list:addNode( node )
-		end
+function XmlNode:child( name )
+	print("XmlNode:child", self, name )
+	local children = rawget( self, '__children' )
+	local func = function( node )
+		return ( node:name() == name )
 	end
-
-	return list
+	return filter( func, children )
 end
 function XmlNode:children()
-	return rawget( self, '__children' )
+	local children = rawget( self, '__children' )
+	local func = function( node )
+		return true
+	end
+	return filter( func, children )
 end
 
 
@@ -348,7 +533,9 @@ end
 
 function XmlNode:toXmlString()
 	local str_t = {
-		"<"..self.__name..">",
+		"<"..self.__name,
+		self:_attrContent(),
+		">",
 		self:_childrenContent(),
 		"</"..self.__name..">",
 	}
@@ -356,16 +543,24 @@ function XmlNode:toXmlString()
 end
 
 function XmlNode:_childrenContent()
-	local str_t = {}
 	local children = rawget( self, '__children' )
-	for k,node in pairs( children ) do
-		if node:isa( XmlTextNode ) then
-			table.insert( str_t, node:toString() )
-		else
-			table.insert( str_t, node:toXmlString() )
-		end
+	local func = function( val, node )
+		return val .. node:toXmlString()
 	end
-	return table.concat( str_t, '' )
+	return foldr( func, "", children )
+end
+
+function XmlNode:_attrContent()
+	local attrs = rawget( self, '__attrs' )
+	table.sort( attrs ) -- apply some consistency
+	local str_t = {}
+	for k, attr in pairs( attrs ) do
+		tinsert( str_t, attr:toXmlString() )
+	end
+	if #str_t > 0 then 
+		tinsert( str_t, 1, '' ) -- insert blank space
+	end
+	return tconcat( str_t, ' ' )
 end
 
 
@@ -373,6 +568,7 @@ end
 -- XML Doc Node
 
 XmlDocNode = inheritsFrom( XmlNode )
+XmlDocNode.NAME = "Attribute Node"
 
 function XmlDocNode:_init( params )
 	-- print("XmlDocNode:_init")
@@ -388,19 +584,49 @@ end
 -- XML Attribute Node
 
 XmlAttrNode = inheritsFrom( XmlBase )
+XmlAttrNode.NAME = "Attribute Node"
+
+function XmlAttrNode:_init( params )
+	-- print("XmlAttrNode:_init", params.name )
+	params = params or {}
+
+	self.__name = params.name
+	self.__value = params.value
+
+end
+
+
+function XmlAttrNode:name()
+	return self.__name
+end
+function XmlAttrNode:setName( value )
+	self.__name = value
+end
+
+function XmlAttrNode:toString()
+	print("XmlAttrNode:toString")
+	return self.__value
+end
+function XmlAttrNode:toXmlString()
+	return self.__name..'="'..self.__value..'"'
+end
+
+-- function XmlAttrNode:child( name )
+-- 	return self
+-- end
 
 
 --====================================================================--
 -- XML Text Node
 
 XmlTextNode = inheritsFrom( XmlBase )
+XmlTextNode.NAME = "Text Node"
 
 function XmlTextNode:_init( params )
 	-- print("XmlTextNode:_init")
 	params = params or {}
 
 	self.__text = params.text or ""
-
 end
 
 function XmlTextNode:toString()
@@ -434,8 +660,9 @@ end
 
 
 function XmlParser:parseAttributes( node, attr_str )
-	string.gsub(attr_str, XmlParser.XML_ATTR_RE, function (w, _, a)
-		node:addAttribute( w, self:decodeXmlString( a ) )
+	string.gsub(attr_str, XmlParser.XML_ATTR_RE, function( key, _, val )
+		local attr = XmlAttrNode( {name=key, value=val} )
+		node:addAttribute( key, attr )
 	end)
 end
 
@@ -509,20 +736,21 @@ function XmlParser:_parseString( xml_str, xml_node, pos )
 
 		local text = string.sub(xml_str, pos, si-1)
 		if not string.find(text, "^%s*$") then
-			xml_node:addChild( XmlTextNode( {text=decodeXmlString(text)} ) )
+			local node = XmlTextNode( {text=decodeXmlString(text),parent=xml_node} )
+			xml_node:addChild( node )
 		end
 
 		pos = ei + 1
 
 		if close == "" and empty == "" then   -- start tag of doc
-			local node = XmlNode( {name=label} )
+			local node = XmlNode( {name=label,parent=xml_node} )
 			self:parseAttributes( node, attrs )
 			xml_node:addChild( node )
 
 			pos = self:_parseString( xml_str, node, pos )
 
 		elseif empty == "/" then  -- empty element tag
-			local node = XmlNode( {name=label} )
+			local node = XmlNode( {name=label,parent=xml_node} )
 			self:parseAttributes( node, attrs )
 			xml_node:addChild( node )
 
@@ -544,6 +772,8 @@ end
 
 local function parse( xml_str )
 	-- print("LuaE4X.parse")
+	XmlNode()
+	XmlDocNode()
 	return XmlParser:parseString( xml_str )
 end
 
@@ -563,6 +793,7 @@ end
 
 return {
 	Parser=XmlParser,
+	XmlListClass=XmlList,
 	load=load,
 	parse=parse,
 	save=save
