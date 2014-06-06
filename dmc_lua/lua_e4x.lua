@@ -196,14 +196,14 @@ local function indexFunc( t, k )
 	-- check for key in children
 	-- dot traversal
 	local children = rawget( t, '__children' )
-	if children then 
-		val = nil 
+	if children then
+		val = nil
 		local func = function( node )
 			return ( node:name() == k )
 		end
 		local v = filter( func, children )
-		if v:length() > 0 then 
-			val = v 
+		if v:length() > 0 then
+			val = v
 		end
 	end
 	if val ~= nil then return val end
@@ -374,12 +374,12 @@ end
 function XmlList:toString()
 	-- error("error XmlList:toString")
 	local nodes = rawget( self, '__nodes' )
-	if #nodes == 0 then return nil end 
+	if #nodes == 0 then return nil end
 	local func = function( val, node )
 		return val .. node:toString()
 	end
 	return foldr( func, "", nodes )
-end 
+end
 
 function XmlList:toXmlString()
 	error( "XmlList:toXmlString, not implemented" )
@@ -422,8 +422,8 @@ function XmlDecNode:_init( params )
 
 end
 
-function XmlDecNode:addAttribute( name, value )
-	self.__attrs[ name ] = value
+function XmlDecNode:addAttribute( node )
+	self.__attrs[ node:name() ] = node
 end
 
 
@@ -449,14 +449,14 @@ function XmlNode:parent()
 	return rawget( self, '__parent' )
 end
 
-function XmlNode:addAttribute( name, value )
-	self.__attrs[ name ] = value
+function XmlNode:addAttribute( node )
+	self.__attrs[ node:name() ] = node
 end
 
 -- return XmlList
 function XmlNode:attribute( name )
 	-- print("XmlNode:attribute", name )
-	if name == '*' then return self:attributes() end 
+	if name == '*' then return self:attributes() end
 	local attrs = rawget( self, '__attrs' )
 	local result = XmlList()
 	local attr = attrs[ name ]
@@ -565,7 +565,7 @@ function XmlNode:_attrContent()
 	for k, attr in pairs( attrs ) do
 		tinsert( str_t, attr:toXmlString() )
 	end
-	if #str_t > 0 then 
+	if #str_t > 0 then
 		tinsert( str_t, 1, '' ) -- insert blank space
 	end
 	return tconcat( str_t, ' ' )
@@ -667,7 +667,7 @@ end
 function XmlParser:parseAttributes( node, attr_str )
 	string.gsub(attr_str, XmlParser.XML_ATTR_RE, function( key, _, val )
 		local attr = XmlAttrNode( {name=key, value=val} )
-		node:addAttribute( key, attr )
+		node:addAttribute( attr )
 	end)
 end
 

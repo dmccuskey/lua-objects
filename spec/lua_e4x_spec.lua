@@ -1,6 +1,6 @@
 package.path = './dmc_lua/?.lua;' .. package.path
 
-local XML = require 'lua_e4x'
+local E4X = require 'lua_e4x'
 local File = require 'lua_files'
 
 
@@ -12,14 +12,14 @@ describe( "Module Test: lua_e4x.lua", function()
 
 		setup( function()
 			local data_file = './spec/xml/test-01.xml'
-			data = File.readFile( data_file, {lines=false} )
-			xml = XML.parse( data )
+			data = File.readFileContents( data_file )
+			xml = E4X.parse( data )
 		end)
 
 
-		it( "method: dot traversal", function()			
-			assert.is.equal( xml.book:isa(XML.XmlListClass), true )
-			assert.is.equal( xml.book.title:isa( XML.XmlListClass ), true )
+		it( "method: dot traversal", function()
+			assert.is.equal( xml.book:isa(E4X.XmlListClass), true )
+			assert.is.equal( xml.book.title:isa( E4X.XmlListClass ), true )
 		end)
 
 		it( "method: length()", function()
@@ -31,7 +31,7 @@ describe( "Module Test: lua_e4x.lua", function()
 
 			--== multiple book records
 
-			assert.is.equal( xml.book:attribute('ISBN'):isa(XML.XmlListClass), true )
+			assert.is.equal( xml.book:attribute('ISBN'):isa(E4X.XmlListClass), true )
 			assert.is.equal( xml.book:attribute('ISBN'):length(), 2 )
 			assert.is.equal( xml.book['@ISBN']:length(), 2 )
 
@@ -66,8 +66,8 @@ describe( "Module Test: lua_e4x.lua", function()
 
 		setup( function()
 			local data_file = './spec/xml/test-01.xml'
-			data = File.readFile( data_file, { lines=false })
-			xml = XML.parse( data )
+			data = File.readFileContents( data_file )
+			xml = E4X.parse( data )
 		end)
 
 
@@ -75,14 +75,14 @@ describe( "Module Test: lua_e4x.lua", function()
 
 			assert.is.equal( xml.book[3], nil )
 
-			assert.is.equal( xml.book[1]:isa( XML.XmlNodeClass ), true )
+			assert.is.equal( xml.book[1]:isa( E4X.XmlNodeClass ), true )
 
 			assert.is.equal( xml.book[1]:name(), 'book' )
 			assert.is.equal( xml:child('book')[1]:name(), 'book' )
 
 			assert.is.equal( xml.book[1]:length(), 1 )
 
-			assert.is.equal( xml.book[1]:children():isa( XML.XmlListClass ), true )
+			assert.is.equal( xml.book[1]:children():isa( E4X.XmlListClass ), true )
 			assert.is.equal( xml.book[1]:children():length(), 3 )
 
 			assert.is.equal( xml.book[1].title[1]:hasComplexContent(), false )
