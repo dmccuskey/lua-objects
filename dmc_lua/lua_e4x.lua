@@ -244,6 +244,7 @@ local function inheritsFrom( base_class, params, constructor )
 
 	local o
 
+	-- TODO: work out toString method
 	-- if base_class and base_class.toString and type(base_class.toString)=='function' then
 	-- 	params.toStringFunc = base_class.toString
 	-- end
