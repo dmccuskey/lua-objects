@@ -717,7 +717,7 @@ function XmlParser:parseString( xml_str )
 		root:setName( label )
 
 	else
-		error("malformed xml")
+		error( "malformed XML in XmlParser:parseString" )
 
 	end
 
@@ -759,7 +759,7 @@ function XmlParser:_parseString( xml_str, xml_node, pos )
 			xml_node:addChild( node )
 
 		else  -- end tag
-			assert( xml_node:name() == label, "incorrect closing label" )
+			assert( xml_node:name() == label, "incorrect closing label found:" )
 			break
 
 		end
