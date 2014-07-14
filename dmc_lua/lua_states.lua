@@ -186,6 +186,7 @@ end
 --====================================================================--
 
 return {
+	setDebug = States._setDebug,
 	mixin = States._mixin
 }
 
