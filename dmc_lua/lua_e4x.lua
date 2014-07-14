@@ -778,7 +778,8 @@ end
 
 local function parse( xml_str )
 	-- print( "LuaE4X.parse" )
-	assert( xml_str and type(xml_str)=='string' and #xml_str > 0, 'Lua E4X: missing XML data to parse' )
+	assert( type(xml_str)=='string', 'Lua E4X: missing XML data to parse' )
+	assert( #xml_str > 0, 'Lua E4X: XML data must have length' )
 	return XmlParser:parseString( xml_str )
 end
 
