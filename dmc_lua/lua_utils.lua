@@ -77,9 +77,9 @@ end
 
 
 function Utils.getTransitionCompleteFunc( count, callback )
-	assert( type(count)=='number' )
-	assert( type(callback)=='function' )
-
+	assert( type(count)=='number', "requires number for count" )
+	assert( type(callback)=='function', "requires callback function" )
+	--==--
 	local total = 0
 	local func = function(...)
 		total = total + 1
