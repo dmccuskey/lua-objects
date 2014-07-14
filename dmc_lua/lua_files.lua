@@ -294,17 +294,17 @@ end
 
 function File.processSectionLine( line )
 	-- print( "File.processSectionLine", line )
-	assert( type(line)=='string' )
+	assert( type(line)=='string', "expected string as parameter" )
 	assert( #line > 0 )
 	--==--
 	local key = line:match( "%[([%u_]+)%]" )
-	assert( type(key) ~= 'nil' )
+	assert( type(key) ~= 'nil', "key not found in line: "..tostring(line) )
 	return string.lower( key ) -- use only lowercase inside of module
 end
 
 function File.processKeyLine( line )
 	-- print( "File.processKeyLine", line )
-	assert( type(line)=='string' )
+	assert( type(line)=='string', "expected string as parameter" )
 	assert( #line > 0 )
 	--==--
 
@@ -343,8 +343,8 @@ end
 
 function File.processKeyName( name )
 	-- print( "File.processKeyName", name )
-	assert( type(name)=='string' )
-	assert( #name > 0 )
+	assert( type(name)=='string', "expected string as parameter" )
+	assert( #name > 0, "no length for name" )
 	--==--
 	return string.lower( name ) -- use only lowercase inside of module
 end
@@ -393,7 +393,8 @@ end
 
 function File.parseFileLines( lines, options )
 	-- print( "parseFileLines", #lines )
-	assert( options.default_section ~= nil )
+	assert( options, "options parameter expected" )
+	assert( options.default_section, "options table requires 'default_section' entry" )
 	--==--
 
 	local curr_section = options.default_section
