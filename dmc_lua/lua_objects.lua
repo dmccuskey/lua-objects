@@ -60,7 +60,7 @@ local Utils = require 'lua_utils'
 local CONSTRUCTOR_FUNC_NAME = 'new'
 
 local function setConstructorName( name )
-	assert( type(name)=='string' )
+	assert( type(name)=='string', "expected string for constructor name" )
 	CONSTRUCTOR_FUNC_NAME = name
 end
 
