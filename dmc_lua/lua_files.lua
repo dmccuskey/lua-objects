@@ -69,8 +69,11 @@ local ClassBase = Objects.ClassBase
 -- Lua File Module
 --====================================================================--
 
+
 local File = inheritsFrom( ClassBase )
-File.NAME = "Lua Files Object"
+File.NAME = "Lua Files Instance"
+
+--== Class constants
 
 File.DEFAULT_CONFIG_SECTION = 'default'
 
