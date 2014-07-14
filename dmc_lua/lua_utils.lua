@@ -1,7 +1,6 @@
 --====================================================================--
 -- lua_utils.lua
 --
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_utils.lua
 --====================================================================--
 
@@ -37,6 +36,7 @@ SOFTWARE.
 -- DMC Lua Library : Lua Utils
 --====================================================================--
 
+
 -- Semantic Versioning Specification: http://semver.org/
 
 local VERSION = "0.1.0"
@@ -60,7 +60,8 @@ local Utils = {}
 
 
 -- createObjectCallback()
--- Creates a closure used to bind a method to an object. Useful for creating a custom callback.
+-- Creates a closure used to bind a method to an object.
+-- Useful for creating a custom callback.
 --
 -- @param object the object which has the method
 -- @param method the method to call
@@ -68,7 +69,7 @@ local Utils = {}
 function Utils.createObjectCallback( object, method )
 	assert( object ~= nil, "missing object in Utils.createObjectCallback" )
 	assert( method ~= nil, "missing method in Utils.createObjectCallback" )
-
+	--==--
 	return function( ... )
 		return method( object, ... )
 	end

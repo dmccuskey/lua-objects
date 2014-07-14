@@ -1,8 +1,6 @@
 --====================================================================--
 -- lua_promise.lua
 --
---
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_promise.lua
 --====================================================================--
 
@@ -37,6 +35,7 @@ SOFTWARE.
 --====================================================================--
 -- DMC Lua Library: Promises
 --====================================================================--
+
 
 -- Semantic Versioning Specification: http://semver.org/
 
@@ -105,8 +104,11 @@ end
 -- Promise Class
 --====================================================================--
 
+
 Promise = inheritsFrom( ObjectBase )
 Promise.NAME = "Promise Instance"
+
+--== State Constants
 
 Promise.STATE_PENDING = 'pending'
 Promise.STATE_RESOLVED = 'resolved'
@@ -133,7 +135,6 @@ end
 --====================================================================--
 
 
-
 --====================================================================--
 --== Public Methods
 
@@ -148,6 +149,7 @@ function Promise:resolve( ... )
 	self._result = {...}
 	self:_execute( self._done_cbs, ... )
 end
+
 function Promise:reject( ... )
 	-- print("Promise:reject")
 	self._state = Promise.STATE_REJECTED
@@ -164,9 +166,11 @@ function Promise:done( callback )
 		self:_addCallback( self._done_cbs, callback )
 	end
 end
+
 function Promise:progress( ... )
 	error("Promise:progress: not yet implemented")
 end
+
 function Promise:fail( errback )
 	-- print("Promise:fail")
 	if self._state == Promise.STATE_REJECTED then
@@ -197,6 +201,7 @@ end
 -- Deferred Class
 --====================================================================--
 
+
 Deferred = inheritsFrom( ObjectBase )
 Deferred.NAME = "Deferred Instance"
 
@@ -212,7 +217,6 @@ end
 
 --== END: Setup Lua Objects
 --====================================================================--
-
 
 
 --====================================================================--

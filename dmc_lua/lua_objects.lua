@@ -1,7 +1,6 @@
 --====================================================================--
 -- lua_objects.lua
 --
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_objects.lua
 --====================================================================--
 
@@ -36,7 +35,6 @@ SOFTWARE.
 --====================================================================--
 -- DMC Lua Library : Lua Objects
 --====================================================================--
-
 
 
 -- Semantic Versioning Specification: http://semver.org/

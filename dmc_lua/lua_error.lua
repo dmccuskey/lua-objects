@@ -1,7 +1,6 @@
 --====================================================================--
 -- lua_error.lua
 --
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_error.lua
 --====================================================================--
 
@@ -60,7 +59,7 @@ local ObjectBase = Objects.ObjectBase
 --====================================================================--
 -- Support Functions
 
--- https://gist.github.com/cwarden/1207556
+-- based on https://gist.github.com/cwarden/1207556
 
 local function try( funcs )
 	local try_f, catch_f, finally_f = funcs[1], funcs[2], funcs[3]
@@ -91,7 +90,7 @@ local Error = inheritsFrom( ObjectBase )
 Error.NAME = "Error Instance"
 
 function Error:_init( params )
-	-- print( "Message:_init" )
+	-- print( "Error:_init" )
 	params = params or {}
 	self:superCall( "_init", params )
 	--==--
@@ -114,8 +113,10 @@ end
 -- Error Facade
 --====================================================================--
 
+-- create Globals
 _G.try = try
 _G.catch = catch
 _G.finally = finally
+
 
 return Error

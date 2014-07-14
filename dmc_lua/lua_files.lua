@@ -1,7 +1,6 @@
 --====================================================================--
 -- lua_files.lua
 --
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_files.lua
 --====================================================================--
 
@@ -36,6 +35,7 @@ SOFTWARE.
 --====================================================================--
 -- DMC Lua Library : Lua Files
 --====================================================================--
+
 
 -- Semantic Versioning Specification: http://semver.org/
 

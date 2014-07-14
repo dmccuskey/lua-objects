@@ -1,8 +1,6 @@
 --====================================================================--
 -- lua_patch.lua
 --
---
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_patch.lua
 --====================================================================--
 
@@ -61,7 +59,7 @@ local doTablePopPatch, doStringFormatPatch
 --== Support Function
 
 local function addPatch( input )
-
+	-- print("add patch")
 	if type(input)=='table' then
 		-- pass
 	elseif type(input)=='string' then
@@ -69,7 +67,7 @@ local function addPatch( input )
 	elseif type(input)=='nil' then
 		input = { PATCH_TABLE_POP, PATCH_STRING_FORMAT }
 	else
-		error("Lua Patch:: unknown patch type '" .. type(input) .. "'" )
+		error( "Lua Patch:: unknown patch type '" .. type(input) .. "'" )
 	end
 
 	for i, patch_name in ipairs( input ) do
@@ -80,7 +78,7 @@ local function addPatch( input )
 			doStringFormatPatch()
 
 		else
-			error("Lua Patch:: unknown patch name '" .. tostring( patch ) .. "'" )
+			error( "Lua Patch:: unknown patch name '" .. tostring( patch ) .. "'" )
 		end
 	end
 end
@@ -88,7 +86,7 @@ end
 
 
 --====================================================================--
--- Patch Work
+-- Setup Patches
 --====================================================================--
 
 
@@ -142,5 +140,9 @@ end
 --====================================================================--
 -- Patch Facade
 --====================================================================--
+
+--[[
+returns function which must be called to enable patches
+--]]
 
 return addPatch

@@ -1,8 +1,6 @@
 --====================================================================--
 -- lua_e4x.lua
 --
---
--- by David McCuskey
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_e4x.lua
 --====================================================================--
 
@@ -60,12 +58,9 @@ local tconcat = table.concat
 local tinsert = table.insert
 local tremove = table.remove
 
--- local Utils = require 'lua_utils'
-
 
 --====================================================================--
 -- Support Functions
-
 
 local function createXmlList()
 	return XmlList()
@@ -322,6 +317,7 @@ end
 function XmlList:addNode( node )
 	-- print( "XmlList:addNode", node.NAME  )
 	assert( node ~= nil, "XmlList:addNode, node can't be nil" )
+	--==--
 
 	local nodes = rawget( self, '__nodes' )
 	if not node:isa( XmlList ) then
