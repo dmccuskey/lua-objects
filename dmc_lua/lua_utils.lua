@@ -50,7 +50,8 @@ local slower = string.lower
 local tconcat = table.concat
 local tinsert = table.insert
 
-local Utils = {}
+
+local Utils = {} -- Utils object
 
 
 
@@ -94,10 +95,11 @@ end
 -- Date Functions
 --====================================================================--
 
+
 --[[
 
-	Given a UNIX time (seconds), calculate the number of weeks, days, etc
-	{ months=0, weeks=2, days=3, hours=8, minutes=35, seconds=21 }
+	Given a UNIX time (seconds), split that duration into number of weeks, days, etc
+	eg, { months=0, weeks=2, days=3, hours=8, minutes=35, seconds=21 }
 
 --]]
 
