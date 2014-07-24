@@ -64,9 +64,10 @@ This file is used to load any of the various Lua `json` modules, but standardize
 
 Of course you will need to install one of the above for it to work. You can also edit the file to add your favorite json module.
 
-`>luarocks install dkjson`
-
-`>luarocks install lua-cjson`
+```
+> luarocks install dkjson
+> luarocks install lua-cjson
+```
 
 
 
