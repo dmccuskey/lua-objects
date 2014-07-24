@@ -6,7 +6,11 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 
 The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted). Install using luarocks:
 
-`luarocks install busted`
+`> luarocks install busted`
+
+Run at the command line:
+
+`> busted`
 
 
 ## Current Modules ##
@@ -60,8 +64,10 @@ This file is used to load any of the various Lua `json` modules, but standardize
 
 Of course you will need to install one of the above for it to work. You can also edit the file to add your favorite json module.
 
-`luarocks install dkjson`
-`luarocks install lua-cjson`
+`>luarocks install dkjson`
+
+`>luarocks install lua-cjson`
+
 
 
 <a name="lua_bytearray"></a>
@@ -71,7 +77,7 @@ Currently this library contains two byte array modules – `lua_bytearray` and `
 
 If you want to use `lua_bytearray` then you need to install `lpack`:
 
-`luarocks install lpack`
+`> luarocks install lpack`
 
 
 **Documentation**
