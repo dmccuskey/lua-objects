@@ -51,7 +51,7 @@ local VERSION = "0.1.0"
 --== Imports
 
 local Objects = require 'lua_objects'
-local Error = require 'lua_bytearray.errors'
+local Error = require 'lua_bytearray.exceptions'
 
 
 --====================================================================--

@@ -1,5 +1,5 @@
 --====================================================================--
--- dmc_lua/lua_bytearray/errors.lua
+-- dmc_lua/lua_bytearray/exceptions.lua
 --
 -- Documentation: http://docs.davidmccuskey.com/display/docs/lua_bytearray.lua
 --====================================================================--

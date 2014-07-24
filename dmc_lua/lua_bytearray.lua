@@ -11,7 +11,7 @@ Creation 2013-11-14
 Last Modification 2014-01-01
 ]]
 
-local Error = require 'lua_bytearray.errors'
+local Error = require 'lua_bytearray.exceptions'
 
 function iskindof(obj, classname)
     local t = type(obj)
