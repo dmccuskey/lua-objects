@@ -4,9 +4,16 @@ A collection of Lua modules.
 
 These are pure Lua modules pulled out of my DMC Corona Library. I wanted to start using these in a server environment. They will later be re-integrate into the Corona Library, using subclassing, etc.
 
+The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted). Install using luarocks:
+
+`luarocks install busted`
 
 
 ## Current Modules ##
+
+* [lua_bytearray](#lua_bytearray)
+
+  A Lua byte array module. [Read more...](#lua_bytearray)
 
 * [lua_e4x](#lua_e4x)
 
@@ -39,6 +46,17 @@ These are pure Lua modules pulled out of my DMC Corona Library. I wanted to star
 * [lua_utils](#lua_utils)
 
   Miscellaneous utility functions. [Read more...](#lua_utils)
+
+
+
+<a name="lua_bytearray"></a>
+### Module: lua_bytearray ###
+
+There are currently two byte arrays – lua_bytearray and bytearray. The former is from another dev, the latter is one I am using. I currently use both in my projects, though I plan on joining the two.
+
+If you want to the usefulness of un/packing shorts, longs, etc, then you need to install `lpack`:
+
+`luarocks install lpack`
 
 
 
