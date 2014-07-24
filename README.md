@@ -58,6 +58,10 @@ The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted
 
 This file is used to load any of the various Lua `json` modules, but standardize the name to `json`. Currently it searches for one of `dkjson`, `cjson` or `json`.
 
+Of course you will need to install one of the above for it to work. You can also edit the file to add your favorite json module.
+
+`luarocks install dkjson`
+`luarocks install lua-cjson`
 
 
 <a name="lua_bytearray"></a>
