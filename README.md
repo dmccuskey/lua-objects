@@ -133,6 +133,10 @@ try{
 				}
 			end
 		end
+	},
+
+	finally{
+		self:close()
 	}
 }
 ```
@@ -140,14 +144,12 @@ try{
 
 **Documentation**
 
-http://docs.davidmccuskey.com/display/docs/lua_e4x.lua
+http://docs.davidmccuskey.com/display/docs/lua_error.lua
 
 
 **Examples**
 
-There are a lot of examples in the unit test file, `spec/lua_e4x_spec.lua`.
-
-There is also a micro example on the documentation website.
+None yet
 
 
 
@@ -186,7 +188,7 @@ http://docs.davidmccuskey.com/display/docs/lua_objects.lua
 
 **Examples**
 
-None yet
+There are a lot of examples in this library's modules and the `dmc-corona-library`.
 
 
 
