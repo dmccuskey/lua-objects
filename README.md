@@ -2,7 +2,7 @@
 
 A collection of Lua modules.
 
-These are pure Lua modules extracted from my [DMC Corona Library](https://github.com/dmccuskey/DMC-Corona-Library). I did this because I wanted to start using them in a server environment. They have been re-integrate into the Corona Library, using subclassing, etc.
+These are pure Lua modules extracted from my [DMC Corona Library](https://github.com/dmccuskey/DMC-Corona-Library). I did this because I wanted to start using them in a server environment. They have been re-integrated back into the Corona Library, using subclassing, etc.
 
 *Tests*
 
