@@ -11,6 +11,10 @@ The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted
 
 ## Current Modules ##
 
+* [json](#json)
+
+  A shim to load Lua `json` modules. [Read more...](#json)
+
 * [lua_bytearray](#lua_bytearray)
 
   A Lua byte array module. [Read more...](#lua_bytearray)
@@ -19,9 +23,9 @@ The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted
 
   Pure Lua E4X XML parser. [Read more...](#lua_e4x)
 
-* [lua_errors](#lua_errors)
+* [lua_error](#lua_error)
 
-  Better error handling for Lua. [Read more...](#lua_errors)
+  Better error handling for Lua. [Read more...](#lua_error)
 
 * [lua_files](#lua_files)
 
@@ -49,21 +53,38 @@ The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted
 
 
 
+<a name="json"></a>
+### Module: json ###
+
+This file is used to load any of the various Lua `json` modules, but standardize the name to `json`. Currently it searches for one of `dkjson`, `cjson` or `json`.
+
+
+
 <a name="lua_bytearray"></a>
 ### Module: lua_bytearray ###
 
-There are currently two byte arrays – lua_bytearray and bytearray. The former is from another dev, the latter is one I am using. I currently use both in my projects, though I plan on joining the two.
+Currently this library contains two byte array modules – `lua_bytearray` and `bytearray`. The former is from another dev and contains methods for un/packing bytes into shorts, longs, etc. The latter currently only supports string-base read/writes. I currently use both in my projects, though I plan on joining the two.
 
-If you want to the usefulness of un/packing shorts, longs, etc, then you need to install `lpack`:
+If you want to use `lua_bytearray` then you need to install `lpack`:
 
 `luarocks install lpack`
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_bytearray.lua
+
+
+**Examples**
+
+There are a lot of examples in the unit test file, `spec/lua_bytearray_spec.lua`.
 
 
 
 <a name="lua_e4x"></a>
 ### Module: lua_e4x ###
 
-An implementation of E4X for Lua.
+`lua_e4x` is an implementation of E4X for sane XML navigation in Lua.
 
 
 **Documentation**
@@ -78,10 +99,90 @@ There are a lot of examples in the unit test file, `spec/lua_e4x_spec.lua`.
 There is also a micro example on the documentation website.
 
 
+
+<a name="lua_error"></a>
+### Module: lua_error ###
+
+`lua_error` contains an Error base class and several *global* methods (`try()`, `catch()` and `finally()`) used to create a decent error-handling framework similar to that of Python.
+
+As seen in the example below, you can check for regular string-based errors or a custom error class.
+
+```lua
+try{
+	function()
+		self:unregister( handler, params )
+	end,
+
+	catch{
+		function(e)
+			if type(e)=='string' then
+				error( e )
+			elseif e:isa( Error.ProtocolError ) then
+				self:_bailout(){
+					code=WebSocket.CLOSE_STATUS_CODE_PROTOCOL_ERROR,
+					reason="WAMP Protocol Error"
+				}
+			else
+				self:_bailout{
+					code=WebSocket.CLOSE_STATUS_CODE_INTERNAL_ERROR,
+					reason="WAMP Internal Error"
+				}
+			end
+		end
+	}
+}
+```
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_e4x.lua
+
+
+**Examples**
+
+There are a lot of examples in the unit test file, `spec/lua_e4x_spec.lua`.
+
+There is also a micro example on the documentation website.
+
+
+
+<a name="lua_files"></a>
+### Module: lua_files ###
+
+`lua_files` contains methods for reading and writing raw data, json, and configuration files.
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_files.lua
+
+
+**Examples**
+
+There are a lot of examples in the unit test file, `spec/lua_files_spec.lua`.
+
+
+
 <a name="lua_objects"></a>
 ### Module: lua_objects ###
 
-This file contains several methods and object classes which together form an object-oriented framework to use when programming in Lua.
+`lua_objects` contains several methods and object classes which together form an object-oriented framework to use when programming in Lua.
+
+Some advanced features:
+* getters/setters
+* event dispatch/listeners
+* structured object setup/teardown
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_objects.lua
+
+
+**Examples**
+
+None yet
 
 
 
@@ -94,11 +195,48 @@ This file contains several methods and object classes which together form an obj
 * Python-style table pop function
 
 
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_patch.lua
+
+
+**Examples**
+
+None yet
+
+
+
+<a name="lua_promise"></a>
+### Module: lua_promise ###
+
+`lua_promise` contains classes and methods to create and use Promises and Deferreds. This is somewhat of a port from Python Twisted.
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_promise.lua
+
+
+**Examples**
+
+None yet
+
+
 
 <a name="lua_states"></a>
 ### Module: lua_states ###
 
 `lua_states` mixin adds functionality to Lua objects so they can implement the State Machine design pattern.
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_states.lua
+
+
+**Examples**
+
+There are a lot of examples in the unit test file, `spec/lua_states_spec.lua`.
 
 
 
@@ -112,5 +250,15 @@ This module is an ever-changing list of helpful utility functions. Ever-changing
 * Image Functions - imageScale()
 * String Functions - split(), stringFormatting()
 * Table Functions - destroy(), extend(), hasOwnProperty(), print(), propertyIn(), removeFromTable(), shuffle(), tableSize(), tableSlice(), tableLength()
-copy one table into another ( similar to jQuery extend() )
-* Web Functions - parse_query(), create_query()
+* Web Functions - urlDecode(), urlEncode(), parseQuery(), createQuery()
+
+
+**Documentation**
+
+http://docs.davidmccuskey.com/display/docs/lua_utils.lua
+
+
+**Examples**
+
+None yet
+
