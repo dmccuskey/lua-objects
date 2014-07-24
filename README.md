@@ -2,9 +2,11 @@
 
 A collection of Lua modules.
 
-These are pure Lua modules pulled out of my DMC Corona Library. I wanted to start using these in a server environment. They will later be re-integrate into the Corona Library, using subclassing, etc.
+These are pure Lua modules extracted from my [DMC Corona Library](https://github.com/dmccuskey/DMC-Corona-Library). I did this because I wanted to start using them in a server environment. They have been re-integrate into the Corona Library, using subclassing, etc.
 
-The unit tests are written using [Busted](https://github.com/Olivine-Labs/busted). Install using luarocks:
+*Tests*
+
+The available unit tests are written using [Busted](https://github.com/Olivine-Labs/busted). Install using luarocks:
 
 `> luarocks install busted`
 
