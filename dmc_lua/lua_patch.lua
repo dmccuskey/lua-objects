@@ -40,6 +40,7 @@ SOFTWARE.
 -- Semantic Versioning Specification: http://semver.org/
 
 local VERSION = "0.2.0"
+local Utils = require 'lua_utils'
 
 
 --====================================================================--
@@ -93,24 +94,10 @@ end
 --====================================================================--
 --== Python-style string formatting
 
--- stringFormatting()
--- implement Python-style string replacement
--- http://lua-users.org/wiki/StringInterpolation
---
-local function stringFormatting( a, b )
-	if not b then
-		return a
-	elseif type(b) == "table" then
-		return string.format(a, unpack(b))
-	else
-		return string.format(a, b)
-	end
-end
-
 doStringFormatPatch = function()
 	if lua_patch_data.string_format_active == false then
 		print( "Lua Patch::activating patch '" .. PATCH_STRING_FORMAT .. "'" )
-		getmetatable("").__mod = stringFormatting
+		getmetatable("").__mod = Utils.stringFormatting
 		lua_patch_data.string_format_active = true
 	end
 end
