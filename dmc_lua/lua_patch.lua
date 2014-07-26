@@ -39,7 +39,12 @@ SOFTWARE.
 
 -- Semantic Versioning Specification: http://semver.org/
 
-local VERSION = "0.2.0"
+local VERSION = "0.2.1"
+
+
+--====================================================================--
+-- Imports
+
 local Utils = require 'lua_utils'
 
 
