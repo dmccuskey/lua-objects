@@ -109,6 +109,8 @@ end
 -- tablePop()
 --
 local function tablePop( t, v )
+	assert( type(t)=='table', "Patch:tablePop, expected table to pop")
+	assert( v, "Patch:tablePop, expected key")
 	local res = t[v]
 	t[v] = nil
 	return res
