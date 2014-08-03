@@ -45,9 +45,6 @@ local VERSION = "0.1.1"
 --====================================================================--
 -- Imports
 
--- 'lua_utils' is required for a couple of functions
--- those functions can be put into this class if wanted
---
 local Utils = require 'lua_utils'
 
 
@@ -210,7 +207,7 @@ local function bless( base, obj )
 	o.__setters = {}
 	o.__getters = {}
 	if base then
-		-- we have a parent, so let's copy down all its getters/setters
+		-- copy down all getters/setters of parent
 		o.__getters = Utils.extend( base.__getters, o.__getters )
 		o.__setters = Utils.extend( base.__setters, o.__setters )
 	end
@@ -281,7 +278,7 @@ end
 --====================================================================--
 
 local ClassBase = inheritsFrom( nil )
-ClassBase.NAME = "Class Base"
+ClassBase.NAME = "Base Class"
 
 ClassBase._PRINT_INCLUDE = {}
 ClassBase._PRINT_EXCLUDE = { '__dmc_super' }
@@ -405,18 +402,19 @@ end
 
 
 --====================================================================--
--- Object Base Class
+--== Object Base Class
 --====================================================================--
+
 
 local ObjectBase = inheritsFrom( ClassBase )
 ObjectBase.NAME = "Object Base"
 
 
 --====================================================================--
--- Class Support Functions
+--== Class Support Functions
 
 -- callback is either function or object (table)
--- creates lookup key given event name and handler
+-- creates listener lookup key given event name and handler
 --
 local function createEventListenerKey( e_name, handler )
 	return e_name .. "::" .. tostring( handler )
@@ -426,7 +424,8 @@ end
 --====================================================================--
 --== Constructor
 
--- this is the flow for DMC-style objects
+-- new()
+-- this method drives the initialization flow for DMC-style objects
 -- typically, you won't override this
 --
 function ObjectBase:new( params )
@@ -545,7 +544,6 @@ function ObjectBase:addEventListener( e_name, listener )
 
 end
 
-
 -- removeEventListener()
 --
 function ObjectBase:removeEventListener( e_name, listener )
@@ -571,10 +569,13 @@ end
 
 -- removeSelf()
 --
+-- this method drives the destruction flow for DMC-style objects
+-- typically, you won't override this
+--
 function ObjectBase:removeSelf()
 	-- print( "ObjectBase:removeSelf" );
 
-	-- skip these if we're an intermediate class (eg, subclass)
+	-- skip these if we're an intermediate class (eg, subclass class)
 	if rawget( self, 'is_intermediate' ) == false then
 		self:_undoInitComplete()
 	end
@@ -646,11 +647,10 @@ end
 
 
 
-
-
 --====================================================================--
 -- Lua Objects Exports
 --====================================================================--
+
 
 return {
 	setConstructorName = setConstructorName,
