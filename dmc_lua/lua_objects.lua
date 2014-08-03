@@ -61,6 +61,13 @@ local function setConstructorName( name )
 	CONSTRUCTOR_FUNC_NAME = name
 end
 
+-- cache globals
+local assert, type, rawget, rawset = assert, type, rawget, rawset
+local getmetatable, setmetatable = getmetatable, setmetatable
+
+local tinsert = table.insert
+local tremove = table.remove
+
 
 --====================================================================--
 -- Class Support Functions
@@ -328,21 +335,21 @@ function ClassBase:superCall( name, ... )
 		self_dmc_super = self.__dmc_super
 		-- here we start with our class
 		s = findMethod( self:class(), name )
-		table.insert( self_dmc_super, s )
+		tinsert( self_dmc_super, s )
 	end
 
 	c = self_dmc_super[ # self_dmc_super ]
 	-- here we start with the super class
 	s = findMethod( c:superClass(), name )
 	if s then
-		table.insert( self_dmc_super, s )
+		tinsert( self_dmc_super, s )
 		result = s[name]( self, unpack( arg ) )
-		table.remove( self_dmc_super, # self_dmc_super )
+		tremove( self_dmc_super, # self_dmc_super )
 	end
 
-	-- here were the first and last on callstack, so clean up
+	-- here we're the first and last on callstack, so clean up
 	if super_flag == nil then
-		table.remove( self_dmc_super, # self_dmc_super )
+		tremove( self_dmc_super, # self_dmc_super )
 		self.__dmc_super = nil
 	end
 
