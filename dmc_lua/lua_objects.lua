@@ -158,19 +158,6 @@ local function indexFunc( t, k )
 	if o then val = o[k] end
 	if val ~= nil then return val end
 
-	-- check object's view
-	--[[
-	o = rawget( t, 'view' )
-	if o ~= nil and o[k] ~= nil then
-		print("on view ", type(o[k]), o.x, k, o )
-		if type(o[k]) == 'function' then
-			return o[k]()
-		else
-			return o[k]
-		end
-	end
-	--]]
-
 	return nil
 end
 
@@ -424,11 +411,6 @@ end
 local ObjectBase = inheritsFrom( ClassBase )
 ObjectBase.NAME = "Object Base"
 
---== Class Constants
-
-ObjectBase.DMC_EVENT_DISPATCH = 'dmc_event_style_dispatch'
-ObjectBase.CORONA_EVENT_DISPATCH = 'corona_event_style_dispatch'
-
 
 --====================================================================--
 -- Class Support Functions
@@ -472,8 +454,8 @@ function ObjectBase:new( params )
 end
 
 
---====================================================================--
---== Start: Setup DMC Objects
+--======================================================--
+-- Start: Setup Lua Objects
 
 -- _init()
 -- initialize the object - setting the view
@@ -509,8 +491,6 @@ end
 --
 function ObjectBase:_initComplete()
 	-- OVERRIDE THIS
-
-	self:_setDispatchType( ObjectBase.DMC_EVENT_DISPATCH )
 end
 -- _undoInitComplete()
 -- remove any items added during _initComplete()
@@ -519,13 +499,20 @@ function ObjectBase:_undoInitComplete()
 	-- OVERRIDE THIS
 end
 
---== END: Setup DMC Objects
---====================================================================--
-
+-- END: Setup Lua Objects
+--======================================================--
 
 
 --====================================================================--
 --== Public Methods
+
+-- dispatchEvent( event, data, params )
+--
+function ObjectBase:dispatchEvent( e_type, data, params )
+	-- print( "ObjectBase:dispatchEvent", e_type );
+	self:_dispatchEvent( self:_buildDmcEvent( e_type, data, params ) )
+end
+
 
 -- addEventListener()
 --
@@ -623,24 +610,6 @@ function ObjectBase:_buildDmcEvent( e_type, data, params )
 	return e
 end
 
--- _corona_dispatchEvent( event, params )
---
-function ObjectBase:_corona_dispatchEvent( event, params )
-	-- print( "ObjectBase:_corona_dispatchEvent", e_type );
-	params = params or {}
-	if params.merge == nil then params.merge = false end
-	--==--
-	self:_dispatchEvent( event )
-end
-
-
--- _dmc_dispatchEvent( event, data, params )
---
-function ObjectBase:_dmc_dispatchEvent( e_type, data, params )
-	-- print( "ObjectBase:_dmc_dispatchEvent", e_type );
-	self:_dispatchEvent( self:_buildDmcEvent( e_type, data, params ) )
-end
-
 
 function ObjectBase:_dispatchEvent( event )
 	-- print( "ObjectBase:_dispatchEvent", event.name );
@@ -666,19 +635,6 @@ function ObjectBase:_dispatchEvent( event )
 
 		end
 	end
-end
-
-
--- _setDispatchType
-function ObjectBase:_setDispatchType( dispatch_type )
-	-- print( "ObjectBase:_setDispatchType", dispatch_type );
-	self._dispatchEventType = dispatch_type
-	if dispatch_type == ObjectBase.CORONA_EVENT_DISPATCH then
-		self.dispatchEvent = ObjectBase._corona_dispatchEvent
-	else
-		self.dispatchEvent = ObjectBase._dmc_dispatchEvent
-	end
-
 end
 
 
