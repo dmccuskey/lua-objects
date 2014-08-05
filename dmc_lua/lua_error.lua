@@ -110,13 +110,14 @@ end
 
 
 --====================================================================--
--- Error Facade
+--== Error API Setup
 --====================================================================--
 
--- create Globals
+-- globals
 _G.try = try
 _G.catch = catch
 _G.finally = finally
+
 
 
 return Error
