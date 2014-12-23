@@ -136,7 +136,6 @@ end
 -- add names for the constructor
 --
 local function registerCtorName( name, class )
-	-- print( "registerCtorName", name, class )
 	class = class or ClassBase
 	--==--
 	assert( type( name ) == 'string', "ctor name should be string" )
@@ -150,7 +149,6 @@ end
 -- add names for the constructor
 --
 local function registerDtorName( name, class )
-	-- print( "registerDtorName", name, class )
 	class = class or ClassBase
 	--==--
 	assert( type( name ) == 'string', "dtor name should be string" )
@@ -197,7 +195,6 @@ local function superCall( self, ... )
 	-- @params lock Class object with which to constrain searching
 	--
 	function findMethod( classes, name, lock )
-		-- print( "findMethod", name, classes, lock )
 		local cls = nil
 		for _, class in ipairs( classes ) do
 			if not lock or class == lock then 
@@ -265,7 +262,6 @@ end
 -- data contains {...}
 --
 local function initializeObject( obj, params )
-	-- print( "initializeObject", obj )
 	params = params or {}
 	--==--
 	assert( params.set_isClass ~= nil, "initializeObject requires paramter 'set_isClass'" )
@@ -305,7 +301,6 @@ end
 -- @param v value
 --
 local function newindexFunc( t, k, v )
-	-- print( "newindexFunc", t, k, v )
 
 	local o, f
 
@@ -332,7 +327,6 @@ end
 -- @param k key
 --
 local function multiindexFunc( t, k )
-	-- print( "multiindexFunc", t, k )
 
 	local o, val
 
@@ -414,7 +408,6 @@ end
 
 
 local function newClass( inheritance, params )
-	-- print( "newClass", inheritance, params )
 	inheritance = inheritance or {}
 	params = params or {}
 	params.set_isClass = true
@@ -482,56 +475,45 @@ end
 
 
 function ClassBase:__new__( ... )
-	-- print( "ClassBase:__new__", self )
-	--==--
 	return self
 end
 
 
 function ClassBase:__destroy__()
-	-- print( "ClassBase:__destroy__", self )
-	--==--
 end
 
 
 function ClassBase.__getters:NAME()
-	-- print( "ClassBase.__getters:NAME", self.__name )
 	return self.__name
 end
 
 
 function ClassBase.__getters:class()
-	-- print( "ClassBase.__getters:class", self.__class )
 	return self.__class
 end
 
 function ClassBase.__getters:super()
-	-- print( "ClassBase.__getters:super", self.__parents )
 	return self.__parents
 end
 
 
 function ClassBase.__getters:is_class()
-	-- print( "ClassBase.__getters:is_class", self.__is_class )
 	return self.__is_class
 end
 
 -- deprecated
 function ClassBase.__getters:is_intermediate()
-	-- print( "ClassBase.__getters:is_intermediate", self.__is_class )
 	return self.__is_class
 end
 
 function ClassBase.__getters:is_instance()
-	-- print( "ClassBase.__getters:is_instance", self.__is_class )
 	return not self.__is_class
 end
 
 
 
-function ClassBase:isa( theClass )
-	-- print( "ClassBase:isa", theClass )
-	--==--
+function ClassBase:isa( the_class )
+
 	local isa = false
 	local cur_class = self.class 
 
@@ -563,6 +545,12 @@ function ClassBase:print( include, exclude )
 end
 
 
+-- deoptimize()
+-- remove super class (optimized) methods from object
+--
+-- deoptimize()
+-- remove super class (optimized) methods from object
+--
 
 function ClassBase:optimize()
 
@@ -615,7 +603,6 @@ ClassBase.superCall = superCall
 -- allow EventsMix to be optional
 
 local object_base_parents = { ClassBase }
-print( EventsMix )
 if EventsMix then tinsert( object_base_parents, EventsMix ) end
 
 ObjectBase = newClass( object_base_parents, { name="Object Class" } )
@@ -631,8 +618,6 @@ ObjectBase = newClass( object_base_parents, { name="Object Class" } )
 -- typically, you won't override this
 --
 function ObjectBase:__new__( ... )
-	-- print( "ObjectBase:__new__" )
-	--==--
 
 	--== Do setup sequence ==--
 
@@ -652,8 +637,6 @@ end
 -- typically, you won't override this
 --
 function ObjectBase:__destroy__()
-	-- print( "ObjectBase:__destroy__" );
-
 	-- skip these if a Class object (ie, NOT an instance)
 	if rawget( self, '__is_class' ) == false then
 		self:_undoInitComplete()
@@ -671,7 +654,6 @@ end
 -- initialize the object - setting the view
 --
 function ObjectBase:__init__( params )
-	-- print( "ObjectBase:__init__" )
 	self:superCall( ClassBase, '__init__', params )
 	-- allow events mix to be optional
 	if EventsMix then 
