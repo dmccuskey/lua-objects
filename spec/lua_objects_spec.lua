@@ -228,7 +228,8 @@ Test simple-inheritance class methods
 --]]
 describe( "Module Test: class methods", function()
 
-	local ClassA, obj 
+	local ClassA
+	local obj, obj2 
 
 	setup( function()
 	end)
@@ -248,6 +249,7 @@ describe( "Module Test: class methods", function()
 		end
 
 		obj = ClassA:new()
+		obj2 = ClassA()
 
 	end)
 
@@ -263,6 +265,10 @@ describe( "Module Test: class methods", function()
 			assert( type( obj ) == 'table' )
 			assert( obj.is_class == false )
 			assert( obj.is_instance == true )
+
+			assert( type( obj2 ) == 'table' )
+			assert( obj2.is_class == false )
+			assert( obj2.is_instance == true )
 		end)
 
 		it( "class has methods", function()
@@ -273,6 +279,9 @@ describe( "Module Test: class methods", function()
 		it( "can access parent methods", function()
 			assert.are.equal( obj:one( 4 ), 4 )
 			assert.are.equal( obj:two( 4 ), 8 )
+
+			assert.are.equal( obj2:one( 4 ), 4 )
+			assert.are.equal( obj2:two( 4 ), 8 )
 		end)
 
 	end)
@@ -416,7 +425,8 @@ Test complex multiple-inheritance class methods
 --]]
 describe( "Module Test: class methods", function()
 
-	local ClassA, ClassB, ClassC, ClassD, obj, obj2
+	local ClassA, ClassB, ClassC, ClassD
+	local obj, obj2
 
 	before_each( function()
 
@@ -501,7 +511,7 @@ describe( "Module Test: class methods", function()
 	end)
 
 	after_each( function()
-		ClassA, ClassB = nil, nil 
+		ClassA, ClassB, ClassC, ClassD = nil, nil, nil, nil 
 		obj, obj2 = nil, nil
 	end)
 
@@ -527,7 +537,8 @@ Test simple inheritance initialization methods
 --]]
 describe( "Module Test: class methods", function()
 
-	local ClassA, ClassB, obj
+	local ClassA, ClassB
+	local obj, obj2 
 
 	before_each( function()
 
@@ -561,13 +572,13 @@ describe( "Module Test: class methods", function()
 
 
 		obj = ClassA:new{ p_one='one', p_two='two' }
-
+		obj2 = ClassA{ p_one='one', p_two='two' }
 
 	end)
 
 	after_each( function()
 		ClassA, ClassB = nil, nil 
-		obj = nil
+		obj, obj2 = nil, nil 
 	end)
 
 
@@ -576,6 +587,9 @@ describe( "Module Test: class methods", function()
 		it( "can access parent methods", function()
 			assert( obj.one == 'override' )
 			assert( obj.two == 'two' )
+
+			assert( obj2.one == 'override' )
+			assert( obj2.two == 'two' )
 		end)
 
 	end)
