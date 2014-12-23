@@ -56,7 +56,7 @@ local Utils = {} -- Utils object
 
 
 --====================================================================--
--- Callback Functions
+--== Callback Functions
 --====================================================================--
 
 
@@ -92,7 +92,7 @@ end
 
 
 --====================================================================--
--- Date Functions
+--== Date Functions
 --====================================================================--
 
 
@@ -157,8 +157,9 @@ end
 
 
 --====================================================================--
--- Image Functions
+--== Image Functions
 --====================================================================--
+
 
 -- imageScale()
 -- container, image - table with width/height keys
@@ -191,8 +192,9 @@ end
 
 
 --====================================================================--
--- JSON/Lua Functions
+--== JSON/Lua Functions
 --====================================================================--
+
 
 --[[
 These functions fix the issue that arises when working with JSON and
@@ -260,8 +262,9 @@ end
 
 
 --====================================================================--
--- Math Functions
+--== Math Functions
 --====================================================================--
+
 
 function Utils.getUniqueRandom( include, exclude )
 	--print( "Utils.getUniqueRandom" )
@@ -325,8 +328,9 @@ end
 
 
 --====================================================================--
--- String Functions
+--== String Functions
 --====================================================================--
+
 
 -- split string up in parts, using separator
 -- returns array of pieces
@@ -360,8 +364,9 @@ end
 
 
 --====================================================================--
--- Table Functions
+--== Table Functions
 --====================================================================--
+
 
 -- destroy()
 -- Deletes all of the items in a table structure.
@@ -609,8 +614,9 @@ end
 
 
 --====================================================================--
--- Web Functions
+--== Web Functions
 --====================================================================--
+
 
 function Utils.createHttpRequest( params )
 	-- print( "Utils.createHttpRequest")
