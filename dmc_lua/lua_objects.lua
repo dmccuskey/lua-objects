@@ -79,7 +79,6 @@ local ClassBase, ObjectBase
 --== Class Support Functions
 
 
--- registerCtorName
 --== Start: copy from lua_utils ==--
 
 function Utils.createObjectCallback( object, method )
@@ -133,6 +132,7 @@ end
 
 
 
+-- registerCtorName
 -- add names for the constructor
 --
 local function registerCtorName( name, class )
@@ -168,7 +168,7 @@ obj:superCall( Class, 'string', ... )
 --]]
 
 -- superCall()
--- method to intelligently find methods in object hierarchy
+-- function to intelligently find methods in object hierarchy
 --
 local function superCall( self, ... )
 	local args = {...}
@@ -679,35 +679,34 @@ function ObjectBase:__init__( params )
 	end
 	--==--
 	-- OVERRIDE THIS
-	--== Create Properties ==--
-	--== Object References ==--
 end
+-- backward compatibility
 ObjectBase._init = ObjectBase.__init__
 
 -- _undoInit()
 -- remove items added during _init()
 --
 function ObjectBase:__undoInit__()
-	-- OVERRIDE THIS
 	self:superCall( ClassBase, '__undoInit__' )
 end
+-- backward compatibility
 ObjectBase._undoInit = ObjectBase.__undoInit__
 
 
 -- _initComplete()
--- any setup after object is done being created
+-- any setup after object is done with __init__
 --
 function ObjectBase:__initComplete__()
-	-- OVERRIDE THIS
 end
+-- backward compatibility
 ObjectBase._initComplete = ObjectBase.__initComplete__
 
 -- _undoInitComplete()
 -- remove any items added during _initComplete()
 --
 function ObjectBase:__undoInitComplete__()
-	-- OVERRIDE THIS
 end
+-- backward compatibility
 ObjectBase._undoInitComplete = ObjectBase.__undoInitComplete__
 
 -- END: Setup Lua Objects
