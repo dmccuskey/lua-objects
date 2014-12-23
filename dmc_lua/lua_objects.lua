@@ -33,7 +33,7 @@ SOFTWARE.
 
 
 --====================================================================--
--- DMC Lua Library : Lua Objects
+--== DMC Lua Library : Lua Objects
 --====================================================================--
 
 
@@ -46,7 +46,12 @@ local VERSION = "1.0.0"
 --====================================================================--
 --== Imports
 
+
+local EventsMixModule = require 'lua_events_mix'
 local Utils = require 'lua_utils'
+
+assert( type( EventsMixModule ) == 'table', "missing Events Mixing" )
+assert( type( Utils ) == 'table', "missing Utils" )
 
 
 
@@ -60,6 +65,9 @@ local getmetatable, setmetatable = getmetatable, setmetatable
 
 local tinsert = table.insert
 local tremove = table.remove
+
+
+local EventsMix = EventsMixModule.EventsMix
 
 -- forward declare
 local ClassBase, ObjectBase
@@ -540,6 +548,7 @@ end
 -- Setup Class Properties (function references)
 
 registerCtorName( 'new', ClassBase )
+registerDtorName( 'destroy', ClassBase )
 ClassBase.superCall = superCall
 
 
@@ -549,21 +558,7 @@ ClassBase.superCall = superCall
 --====================================================================--
 
 
-ObjectBase = inheritsFrom( ClassBase, { name="Object Class" } )
-
-
-
---====================================================================--
---== Class Support Functions
-
-
--- callback is either function or object (table)
--- creates listener lookup key given event name and handler
---
-local function createEventListenerKey( e_name, handler )
-	return e_name .. "::" .. tostring( handler )
-end
-
+ObjectBase = newClass( { ClassBase, EventsMix }, { name="Object Class" } )
 
 
 
@@ -571,6 +566,10 @@ end
 --== Constructor
 
 
+-- __new__()
+-- this method drives the construction flow for DMC-style objects
+-- typically, you won't override this
+--
 function ObjectBase:__new__( ... )
 	-- print( "ObjectBase:__new__" )
 	--==--
@@ -588,39 +587,46 @@ function ObjectBase:__new__( ... )
 end
 
 
+-- __destroy__()
+-- this method drives the destruction flow for DMC-style objects
+-- typically, you won't override this
+--
+function ObjectBase:__destroy__()
+	-- print( "ObjectBase:__destroy__" );
+
+	-- skip these if a Class object (ie, NOT an instance)
+	if rawget( self, '__is_class' ) == false then
+		self:_undoInitComplete()
+	end
+
+	self:__undoInit__()
+end
+
+
+
 --======================================================--
 -- Start: Setup Lua Objects
 
 -- _init()
 -- initialize the object - setting the view
 --
-function ObjectBase:__init__( options )
+function ObjectBase:__init__( params )
 	-- print( "ObjectBase:__init__" )
+	self:superCall( ClassBase, '__init__', params )
+	self:superCall( EventsMix, '__init__', params )
+
 	-- OVERRIDE THIS
 	--== Create Properties ==--
-	self.__event_listeners = {} -- holds event listeners
-	--[[
-	event listeners key'd by:
-	* <event name>::<function>
-	* <event name>::<object>
-	{
-		<event name> = {
-			'event::function' = func,
-			'event::object' = object (table)
-		}
-	}
-	--]]
 	--== Object References ==--
 end
-
 ObjectBase._init = ObjectBase.__init__
 
 -- _undoInit()
 -- remove items added during _init()
 --
-function ObjectBase:__undoInit__( options )
+function ObjectBase:__undoInit__()
 	-- OVERRIDE THIS
-	self.__event_listeners = nil
+	self:superCall( ClassBase, '__undoInit__' )
 end
 ObjectBase._undoInit = ObjectBase.__undoInit__
 
@@ -650,144 +656,16 @@ ObjectBase._undoInitComplete = ObjectBase.__undoInitComplete__
 --== Public Methods
 
 
--- dispatchEvent( event, data, params )
---
-function ObjectBase:dispatchEvent( e_type, data, params )
-	-- print( "ObjectBase:dispatchEvent", e_type );
-	self:_dispatchEvent( self:_buildDmcEvent( e_type, data, params ) )
-end
+-- none
 
-
--- addEventListener()
---
-function ObjectBase:addEventListener( e_name, listener )
-	-- print( "ObjectBase:addEventListener", e_name, listener );
-
-	-- Sanity Check
-
-	if not e_name or type(e_name)~='string' then
-		error( "ERROR addEventListener: event name must be string", 2 )
-	end
-	if not listener and not Utils.propertyIn( {'function','table'}, type(listener) ) then
-		error( "ERROR addEventListener: listener must be a function or object", 2 )
-	end
-
-	-- Processing
-
-	local events, listeners, key
-
-	events = self.__event_listeners
-	if not events[ e_name ] then events[ e_name ] = {} end
-	listeners = events[ e_name ]
-
-	key = createEventListenerKey( e_name, listener )
-	if listeners[ key ] then
-		print("WARNING:: ObjectBase:addEventListener, already have listener")
-	else
-		listeners[ key ] = listener
-	end
-
-end
-
--- removeEventListener()
---
-function ObjectBase:removeEventListener( e_name, listener )
-	-- print( "ObjectBase:removeEventListener" );
-
-	local listeners, key
-
-	listeners = self.__event_listeners[ e_name ]
-	if not listeners or type(listeners)~= 'table' then
-		print("WARNING:: ObjectBase:removeEventListener, no listeners found")
-	end
-
-	key = createEventListenerKey( e_name, listener )
-
-	if not listeners[ key ] then
-		print("WARNING:: ObjectBase:removeEventListener, listener not found")
-	else
-		listeners[ key ] = nil
-	end
-
-end
-
-
--- removeSelf()
---
--- this method drives the destruction flow for DMC-style objects
--- typically, you won't override this
---
-function ObjectBase:removeSelf()
-	-- print( "ObjectBase:removeSelf" );
-
-	-- skip these if a Class object (ie, NOT an instance)
-	if rawget( self, '__is_class' ) == false then
-		self:_undoInitComplete()
-	end
-
-	self:_undoInit()
-end
 
 
 --====================================================================--
 --== Private Methods
 
-function ObjectBase:_buildDmcEvent( e_type, data, params )
-	params = params or {}
-	if params.merge == nil then params.merge = true end
-	--==--
-	local e
-
-	if params.merge and type( data ) == 'table' then
-		e = data
-		e.name = self.EVENT
-		e.type = e_type
-		e.target = self
-
-	else
-		e = {
-			name=self.EVENT,
-			type=e_type,
-			target=self,
-			data=data
-		}
-
-	end
-	return e
-end
-
-
-function ObjectBase:_dispatchEvent( event )
-	-- print( "ObjectBase:_dispatchEvent", event.name );
-	local e_name, listeners
-
-	e_name = event.name
-	if not e_name or not self.__event_listeners[ e_name ] then return end
-
-	listeners = self.__event_listeners[ e_name ]
-	if type(listeners)~='table' then return end
-
-	for k, callback in pairs( listeners ) do
-
-		if type( callback ) == 'function' then
-			-- have function
-		 	callback( event )
-
-		elseif type( callback )=='table' and callback[e_name] then
-			-- have object/table
-			local method = callback[e_name]
-			method( callback, event )
-
-		else
-			print( "WARNING: ObjectBase dispatchEvent", e_name )
-
-		end
-	end
-end
-
 
 -- Setup Class Properties (function references)
-registerCtorName( 'new', ObjectBase )
+-- registerDtorName( 'removeSelf', ObjectBase )
 
 
 
