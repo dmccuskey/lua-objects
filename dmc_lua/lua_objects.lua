@@ -460,12 +460,8 @@ end
 
 ClassBase = newClass( nil, { name="Base Class" } )
 
-ClassBase._PRINT_INCLUDE = {}
-ClassBase._PRINT_EXCLUDE = { '__dmc_super' }
-
 
 function ClassBase:__create__( ... )
-	-- print( "ClassBase:__create__", self, self.NAME )
 	local params = {
 		data = {...},
 		set_isClass = false
@@ -522,14 +518,14 @@ function ClassBase:isa( the_class )
 	local cur_class = self.class 
 
 	-- test self
-	if cur_class == theClass then 
+	if cur_class == the_class then 
 		isa = true 
 
 	-- test parents
 	else 
 		local parents = self.__parents
 		for i=1, #parents do
-			isa = parents[i]:isa( theClass )
+			isa = parents[i]:isa( the_class )
 			if isa == true then break end
 		end
 	end
@@ -539,43 +535,37 @@ end
 
 
 
--- print
+-- optimize()
+-- move super class methods to object
 --
-function ClassBase:print( include, exclude )
-	local include = include or self._PRINT_INCLUDE
-	local exclude = exclude or self._PRINT_EXCLUDE
-
-	Utils.printObject( self, include, exclude )
-end
-
-
--- deoptimize()
--- remove super class (optimized) methods from object
---
--- deoptimize()
--- remove super class (optimized) methods from object
---
-
 function ClassBase:optimize()
 
-	function _optimize( obj, class )
+	function _optimize( obj, inheritance )
 
-		-- climb up the hierarchy
-		if not class then return end
-		_optimize( obj, class:superClass() )
+		if not inheritance or #inheritance == 0 then return end
 
-		-- make local references to all functions
-		for k,v in pairs( class ) do
-			if type( v ) == 'function' then
-				obj[ k ] = v
+		for i=#inheritance,1,-1 do
+			local parent = inheritance[i]
+
+			-- climb up the hierarchy
+			_optimize( obj, parent.__parents )
+
+			-- make local references to all functions
+			for k,v in pairs( parent ) do
+				if type( v ) == 'function' then
+					obj[ k ] = v
+				end
 			end
 		end
 
 	end
 
-	_optimize( self, self:class() )
+	_optimize( self, { self.__class } )
 end
 
+-- deoptimize()
+-- remove super class (optimized) methods from object
+--
 function ClassBase:deoptimize()
 	for k,v in pairs( self ) do
 		if type( v ) == 'function' then
