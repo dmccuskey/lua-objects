@@ -631,9 +631,12 @@ end
 -- typically, you won't override this
 --
 function ObjectBase:__destroy__()
+
+	--== Do teardown sequence ==--
+
 	-- skip these if a Class object (ie, NOT an instance)
 	if rawget( self, '__is_class' ) == false then
-		self:_undoInitComplete()
+		self:__undoInitComplete__()
 	end
 
 	self:__undoInit__()
