@@ -47,11 +47,7 @@ local VERSION = "1.0.0"
 --== Imports
 
 
-local EventsMixModule = require 'lua_events_mix'
-local Utils = require 'lua_utils'
-
-assert( type( EventsMixModule ) == 'table', "missing Events Mixing" )
-assert( type( Utils ) == 'table', "missing Utils" )
+local has_events, EventsMixModule = pcall( require, 'lua_events_mix' )
 
 
 
@@ -62,14 +58,17 @@ assert( type( Utils ) == 'table', "missing Utils" )
 -- cache globals
 local assert, type, rawget, rawset = assert, type, rawget, rawset
 local getmetatable, setmetatable = getmetatable, setmetatable
--- table for copies from lua_utils
-local Utils = {}
 
 local tinsert = table.insert
 local tremove = table.remove
 
+-- table for copies from lua_utils
+local Utils = {}
 
-local EventsMix = EventsMixModule.EventsMix
+local EventsMix
+if has_events then 
+	EventsMix = EventsMixModule.EventsMix
+end
 
 -- forward declare
 local ClassBase, ObjectBase
@@ -613,7 +612,13 @@ ClassBase.superCall = superCall
 --====================================================================--
 
 
-ObjectBase = newClass( { ClassBase, EventsMix }, { name="Object Class" } )
+-- allow EventsMix to be optional
+
+local object_base_parents = { ClassBase }
+print( EventsMix )
+if EventsMix then tinsert( object_base_parents, EventsMix ) end
+
+ObjectBase = newClass( object_base_parents, { name="Object Class" } )
 
 
 
@@ -668,8 +673,11 @@ end
 function ObjectBase:__init__( params )
 	-- print( "ObjectBase:__init__" )
 	self:superCall( ClassBase, '__init__', params )
-	self:superCall( EventsMix, '__init__', params )
-
+	-- allow events mix to be optional
+	if EventsMix then 
+		self:superCall( EventsMix, '__init__', params )
+	end
+	--==--
 	-- OVERRIDE THIS
 	--== Create Properties ==--
 	--== Object References ==--
