@@ -62,6 +62,8 @@ assert( type( Utils ) == 'table', "missing Utils" )
 -- cache globals
 local assert, type, rawget, rawset = assert, type, rawget, rawset
 local getmetatable, setmetatable = getmetatable, setmetatable
+-- table for copies from lua_utils
+local Utils = {}
 
 local tinsert = table.insert
 local tremove = table.remove
@@ -79,6 +81,59 @@ local ClassBase, ObjectBase
 
 
 -- registerCtorName
+--== Start: copy from lua_utils ==--
+
+function Utils.createObjectCallback( object, method )
+	assert( object ~= nil, "missing object in Utils.createObjectCallback" )
+	assert( method ~= nil, "missing method in Utils.createObjectCallback" )
+	--==--
+	return function( ... )
+		return method( object, ... )
+	end
+end
+
+
+-- extend()
+-- Copy key/values from one table to another
+-- Will deep copy any value from first table which is itself a table.
+--
+-- @param fromTable the table (object) from which to take key/value pairs
+-- @param toTable the table (object) in which to copy key/value pairs
+-- @return table the table (object) that received the copied items
+--
+function Utils.extend( fromTable, toTable )
+
+	if not fromTable or not toTable then
+		error( "table can't be nil" )
+	end
+	function _extend( fT, tT )
+
+		for k,v in pairs( fT ) do
+
+			if type( fT[ k ] ) == "table" and
+				type( tT[ k ] ) == "table" then
+
+				tT[ k ] = _extend( fT[ k ], tT[ k ] )
+
+			elseif type( fT[ k ] ) == "table" then
+				tT[ k ] = _extend( fT[ k ], {} )
+
+			else
+				tT[ k ] = v
+			end
+		end
+
+		return tT
+	end
+
+	return _extend( fromTable, toTable )
+end
+
+--== End: copy from lua_utils ==--
+
+
+
+
 -- add names for the constructor
 --
 local function registerCtorName( name, class )
