@@ -728,7 +728,7 @@ ObjectBase._undoInitComplete = ObjectBase.__undoInitComplete__
 
 
 -- Setup Class Properties (function references)
--- registerDtorName( 'removeSelf', ObjectBase )
+registerDtorName( 'removeSelf', ObjectBase )
 
 
 
