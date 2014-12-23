@@ -379,8 +379,12 @@ local function blessObject( inheritance, params )
 	local mt = {
 		__index = multiindexFunc,
 		__newindex = newindexFunc,
-		__call = function()
-			return initializeObject( o, params )
+		__call = function( obj, ... )
+			local p = {
+				data={...},
+				set_isClass=false
+			}
+			return initializeObject( obj, p )
 		end
 	}
 	setmetatable( o, mt )
