@@ -43,6 +43,9 @@ local ObjectBase = Objects.ObjectBase
 --====================================================================--
 
 
+--[[
+Test methods and such on items inside of Lua Objects
+--]]
 describe( "Module Test: test Lua Object availability", function()
 
 	it( "has Class name", function()
@@ -65,7 +68,7 @@ describe( "Module Test: test Lua Object availability", function()
 		assert( type( ObjectBase.isa ) == 'function' )
 	end)
 
-	it( "has constructor function", function()
+	it( "has ctor/dtor name functions", function()
 		assert( Objects.registerCtorName ~= nil )
 		assert( type( Objects.registerCtorName ) == 'function' )
 
@@ -74,7 +77,7 @@ describe( "Module Test: test Lua Object availability", function()
 	end)
 
 	it( "has a string constructor name", function()
-		assert.are.equal( type( Objects.registerCtorName( 'blorf' ) ), 'function' )
+		assert.are.equal( type( Objects.registerCtorName( 'create' ) ), 'function' )
 
 		assert.has.errors( function() Objects.registerCtorName() end )
 		assert.has.errors( function() Objects.registerCtorName( 4 ) end )
@@ -82,7 +85,7 @@ describe( "Module Test: test Lua Object availability", function()
 	end)
 
 	it( "has a string destructor name", function()
-		assert.are.equal( type( Objects.registerDtorName( 'blorf' ) ), 'function' )
+		assert.are.equal( type( Objects.registerDtorName( 'delete' ) ), 'function' )
 
 		assert.has.errors( function() Objects.registerDtorName() end )
 		assert.has.errors( function() Objects.registerDtorName( 4 ) end )
@@ -92,15 +95,14 @@ describe( "Module Test: test Lua Object availability", function()
 end)
 
 
+
+
+--[[
+Test the simplest class ever
+--]]
 describe( "Module Test: simplest class", function()
 
 	local Class
-
-	setup( function()
-	end)
-
-	teardown( function()
-	end)
 
 	before_each( function()
 		Class = newClass()
@@ -110,27 +112,22 @@ describe( "Module Test: simplest class", function()
 		Class = nil 
 	end)
 
-	describe("Test: simplest class elements", function()
+	describe( "Test: simplest class elements", function()
 
-		it( "returns an object", function()
-			assert( Class ~= nil )
+		it( "returns a Class object", function()
+			assert( type(Class) == 'table' )
+			assert( Class.is_class == true )
 		end)
 
-		it( "has dmc-style properties", function()
-			assert( rawget( Class, '__setters' ) ~= nil )
-			assert( rawget( Class, '__getters' ) ~= nil )
-			assert( rawget( Class, '__parents' ) ~= nil )
-		end)
-
-		it( "is not a table", function()
+		it( "is a subclass", function()
 			assert.are.equal( Class:isa( Class ), true )
 			assert.are.equal( Class:isa( ClassBase ), true )
 
-			assert.are.equal( Class:isa(), false )
+			assert.are.equal( Class:isa( nil ), false )
 			assert.are.equal( Class:isa( {} ), false )
 		end)
 
-		it( "has a parent ", function()
+		it( "has a parent", function()
 			assert.are.equal( #Class.super, 1 )
 		end)
 
@@ -138,8 +135,21 @@ describe( "Module Test: simplest class", function()
 			assert( Class.class == Class )
 		end)
 
-		it( "has methods", function()
+		it( "has ctor/dtor methods", function()
 			assert( Class.new ~= nil )
+			assert( type(Class.new) == 'function' )
+
+			assert( Class.destroy ~= nil )
+			assert( type(Class.destroy) == 'function' )
+		end)
+
+
+		--== Private Testing ==--
+
+		it( "has dmc-style properties", function()
+			assert( rawget( Class, '__setters' ) ~= nil )
+			assert( rawget( Class, '__getters' ) ~= nil )
+			assert( rawget( Class, '__parents' ) ~= nil )
 		end)
 
 	end)
@@ -148,15 +158,13 @@ end)
 
 
 
+
+--[[
+Test the simplest inheritance
+--]]
 describe( "Module Test: single ineritance class", function()
 
 	local ParentClass, Class
-
-	setup( function()
-	end)
-
-	teardown( function()
-	end)
 
 	before_each( function()
 		ParentClass = newClass( {}, {} )
@@ -168,17 +176,14 @@ describe( "Module Test: single ineritance class", function()
 		Class = nil 
 	end)
 
-	describe("Test: simplest class elements", function()
+	describe( "Test: simplest class elements", function()
 
 		it( "returns an object", function()
-			assert( ParentClass ~= nil )
-			assert( Class ~= nil )
-		end)
+			assert( type(ParentClass) == 'table' )
+			assert( ParentClass.is_class == true )
 
-		it( "has dmc-style properties", function()
-			assert( rawget( Class, '__setters' ) ~= nil )
-			assert( rawget( Class, '__getters' ) ~= nil )
-			assert( rawget( Class, '__parents' ) ~= nil )
+			assert( type(Class) == 'table' )
+			assert( Class.is_class == true )
 		end)
 
 		it( "is not a table", function()
@@ -186,7 +191,7 @@ describe( "Module Test: single ineritance class", function()
 			assert( Class:isa( ParentClass ) == true )
 			assert( Class:isa( ClassBase ) == true )
 
-			assert( Class:isa() == false )
+			assert( Class:isa( nil ) == false )
 			assert( Class:isa( {} ) == false )
 		end)
 
@@ -194,9 +199,21 @@ describe( "Module Test: single ineritance class", function()
 			assert( Class.class == Class )
 		end)
 
-		it( "has methods", function()
-			assert( ParentClass.new ~= nil )
-			assert( Class.new ~= nil )
+		it( "has ctor/dtor methods", function()
+			assert( type(ParentClass.new) == 'function' )
+			assert( type(ParentClass.destroy) == 'function' )
+
+			assert( type(Class.new) == 'function' )
+			assert( type(Class.destroy) == 'function' )
+		end)
+
+
+		--== Private Testing ==--
+
+		it( "has dmc-style properties", function()
+			assert( rawget( Class, '__setters' ) ~= nil )
+			assert( rawget( Class, '__getters' ) ~= nil )
+			assert( rawget( Class, '__parents' ) ~= nil )
 		end)
 
 	end)
@@ -206,6 +223,9 @@ end)
 
 
 
+--[[
+Test simple-inheritance class methods
+--]]
 describe( "Module Test: class methods", function()
 
 	local ClassA, obj 
@@ -239,15 +259,15 @@ describe( "Module Test: class methods", function()
 
 	describe("Test: simplest class elements", function()
 
-		it( "class has methods", function()
-			assert( ClassA.one ~= nil )
-			assert( type( ClassA.one ) == 'function' )
-			assert( ClassA.two ~= nil )
-			assert( type( ClassA.two ) == 'function' )
+		it( "created object", function()
+			assert( type( obj ) == 'table' )
+			assert( obj.is_class == false )
+			assert( obj.is_instance == true )
 		end)
 
-		it( "created object", function()
-			assert( obj ~= nil )
+		it( "class has methods", function()
+			assert( type( ClassA.one ) == 'function' )
+			assert( type( ClassA.two ) == 'function' )
 		end)
 
 		it( "can access parent methods", function()
@@ -262,6 +282,9 @@ end)
 
 
 
+--[[
+Test multiple-inheritance class methods
+--]]
 describe( "Module Test: class methods", function()
 
 	local ClassA, ClassB, obj, obj2
@@ -289,6 +312,8 @@ describe( "Module Test: class methods", function()
 			return num * 6
 		end
 
+		-- function ClassA:four( num ) end
+
 
 		ClassB = newClass( ClassA )
 
@@ -299,6 +324,8 @@ describe( "Module Test: class methods", function()
 		function ClassB:two( num )
 			return num * 2
 		end
+
+		-- function ClassB:three( num ) end
 
 		function ClassB:four( num )
 			return num * 4
@@ -317,47 +344,39 @@ describe( "Module Test: class methods", function()
 	end)
 
 
-	describe("Test: simplest class elements", function()
+	describe("Test: inherited class elements", function()
 
 		it( "ClassA has methods", function()
 			assert( rawget( ClassA, 'one' ) ~= nil  )
-			assert( ClassA.one ~= nil )
 			assert( type( ClassA.one ) == 'function' )
 
 			assert( rawget( ClassA, 'two' ) ~= nil  )
-			assert( ClassA.two ~= nil )
 			assert( type( ClassA.two ) == 'function' )
 
 			assert( rawget( ClassA, 'three' ) ~= nil  )
-			assert( ClassA.three ~= nil )
 			assert( type( ClassA.three ) == 'function' )
 
 			assert( rawget( ClassA, 'four' ) == nil  )
-			assert( ClassA.four == nil )
 			assert( type( ClassA.four ) == 'nil' )
 		end)
 
 		it( "ClassB has methods", function()
 			assert( rawget( ClassB, 'one' ) ~= nil )
-			assert( ClassB.one ~= nil )
 			assert( type( ClassB.one ) == 'function' )
 
 			assert( rawget( ClassB, 'two' ) ~= nil  )
-			assert( ClassB.two ~= nil )
 			assert( type( ClassB.two ) == 'function' )
 
 			assert( rawget( ClassB, 'three' ) == nil  )
-			assert( ClassB.three ~= nil )
 			assert( type( ClassB.three ) == 'function' )
 
 			assert( rawget( ClassB, 'four' ) ~= nil  )
 			-- inherited
-			assert( ClassB.four ~= nil )
 			assert( type( ClassB.four ) == 'function' )
 		end)
 
 		it( "created object", function()
-			assert( obj ~= nil )
+			assert( type(obj) == 'table' )
 		end)
 
 		it( "Obj1 several parent classes", function()
@@ -365,7 +384,7 @@ describe( "Module Test: class methods", function()
 			assert( obj:isa( ClassB ) == true )
 			assert( obj:isa( ClassBase ) == true )
 
-			assert( obj:isa() == false )
+			assert( obj:isa( nil ) == false )
 			assert( obj:isa( {} ) == false )
 		end)
 
@@ -374,7 +393,7 @@ describe( "Module Test: class methods", function()
 			assert( obj2:isa( ClassB ) == true )
 			assert( obj2:isa( ClassBase ) == true )
 
-			assert( obj2:isa() == false )
+			assert( obj2:isa( nil ) == false )
 			assert( obj2:isa( {} ) == false )
 		end)
 
@@ -392,18 +411,14 @@ end)
 
 
 
+--[[
+Test complex multiple-inheritance class methods
+--]]
 describe( "Module Test: class methods", function()
 
 	local ClassA, ClassB, ClassC, ClassD, obj, obj2
 
-	setup( function()
-	end)
-
-	teardown( function()
-	end)
-
 	before_each( function()
-
 
 		ClassA = newClass()
 		ClassA.NAME = "Class A"
@@ -416,9 +431,7 @@ describe( "Module Test: class methods", function()
 			return num * 4
 		end
 
-		-- function ClassA:three( num )
-		-- 	return num * 4
-		-- end
+		-- function ClassA:three( num ) end
 
 		function ClassA:four( num )
 			return num * 4
@@ -433,10 +446,7 @@ describe( "Module Test: class methods", function()
 			return val * 3
 		end
 
-		-- function ClassB:two( num )
-		-- 	local val = self:superCall( 'two', num )
-		-- 	return val * 3
-		-- end
+		-- function ClassB:two( num ) end
 
 		function ClassB:three( num )
 			-- local val = self:superCall( 'three', num )
@@ -444,10 +454,7 @@ describe( "Module Test: class methods", function()
 			return val * 3
 		end
 
-		-- function ClassB:four( num )
-		-- 	local val = self:superCall( 'four', num )
-		-- 	return val * 3
-		-- end
+		-- function ClassB:four( num ) end
 
 
 		ClassC = newClass( ClassB )
@@ -463,15 +470,9 @@ describe( "Module Test: class methods", function()
 			return val * 2
 		end
 
-		-- function ClassC:three( num )
-		-- 	local val = self:superCall( 'three', num )
-		-- 	return val * 2
-		-- end
+		-- function ClassC:three( num ) end
 
-		-- function ClassC:four( num )
-		-- 	local val = self:superCall( 'four', num )
-		-- 	return val * 2
-		-- end
+		-- function ClassC:four( num ) end
 
 
 		ClassD = newClass( ClassC )
@@ -482,9 +483,7 @@ describe( "Module Test: class methods", function()
 			return val * 1
 		end
 
-		-- function ClassD:two( num )
-		-- 	return num * 1
-		-- end
+		-- function ClassD:two( num ) end
 
 		function ClassD:three( num )
 			local val = self:superCall( 'three', num )
@@ -499,7 +498,6 @@ describe( "Module Test: class methods", function()
 
 		obj = ClassD:new()
 
-
 	end)
 
 	after_each( function()
@@ -508,9 +506,9 @@ describe( "Module Test: class methods", function()
 	end)
 
 
-	describe("Test: simplest class elements", function()
+	describe("Test: complex multiple-inheritance method calls", function()
 
-		it( "can access parent methods", function()
+		it( "has good answers", function()
 			assert.are.equal( obj:one( 4 ), 96 )
 			assert.are.equal( obj:two( 4 ), 32 )
 			assert.are.equal( obj:three( 4 ), 12 )
@@ -524,16 +522,12 @@ end)
 
 
 
-
+--[[
+Test simple inheritance initialization methods
+--]]
 describe( "Module Test: class methods", function()
 
-	local ClassA, ClassB, ClassC, ClassD, obj, obj2
-
-	setup( function()
-	end)
-
-	teardown( function()
-	end)
+	local ClassA, ClassB, obj
 
 	before_each( function()
 
@@ -573,7 +567,7 @@ describe( "Module Test: class methods", function()
 
 	after_each( function()
 		ClassA, ClassB = nil, nil 
-		obj, obj2 = nil, nil
+		obj = nil
 	end)
 
 
@@ -591,23 +585,14 @@ end)
 
 
 
+--[[
+Test simple inheritance initialization methods
+--]]
+describe( "Module Test: complex hierarchy", function()
 
-
-
-
-
-describe( "Module Test: class methods", function()
-
-	local ClassA, ClassB, ClassC, ClassD, obj, obj2
-
-	setup( function()
-	end)
-
-	teardown( function()
-	end)
+	local ClassZ, ClassA, ClassB, ClassC, obj, obj2
 
 	before_each( function()
-
 
 		ClassZ = newClass( ObjectBase )
 		ClassZ.NAME = "Class Z"
@@ -655,18 +640,15 @@ describe( "Module Test: class methods", function()
 		end
 
 
-
 		ClassC = newClass( { ClassA, ClassB } )
 		ClassC.NAME = "Class C"
 
 		function ClassC:__init__( params )
 			-- print( "ClassC:__init__", params )
 			params = params or {}
-			self:superCall( ClassZ, '__init__', params )
 			self:superCall( ClassB, '__init__', params )
 			self:superCall( ClassA, '__init__', params )
 			--==--
-
 
 			self.one = params.p_one
 			self.two = params.p_two
@@ -686,7 +668,7 @@ describe( "Module Test: class methods", function()
 	end)
 
 	after_each( function()
-		ClassA, ClassB = nil, nil 
+		ClassZ, ClassA, ClassB, ClassC = nil, nil, nil, nil 
 		obj, obj2 = nil, nil
 	end)
 
@@ -720,7 +702,6 @@ describe( "Module Test: class methods", function()
 			obj:checkEnd()
 			assert( obj._checkEnd == true )
 		end)
-
 
 	end)
 
