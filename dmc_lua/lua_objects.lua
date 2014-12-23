@@ -70,22 +70,28 @@ local ClassBase, ObjectBase
 --== Class Support Functions
 
 
+-- registerCtorName
+-- add names for the constructor
+--
 local function registerCtorName( name, class )
 	-- print( "registerCtorName", name, class )
 	class = class or ClassBase
 	--==--
-	assert( type( name ) == 'string' )
+	assert( type( name ) == 'string', "ctor name should be string" )
 	assert( class.is_class, "Class is not is_class" )
 
 	class[ name ] = class.__create__
 	return class[ name ]
 end
 
+-- registerDtorName
+-- add names for the constructor
+--
 local function registerDtorName( name, class )
 	-- print( "registerDtorName", name, class )
 	class = class or ClassBase
 	--==--
-	assert( type( name ) == 'string' )
+	assert( type( name ) == 'string', "dtor name should be string" )
 	assert( class.is_class, "Class is not is_class" )
 
 	class[ name ] = class.__destroy__
@@ -94,78 +100,14 @@ end
 
 
 
--- printObject()
--- print out the keys contained within a table.
--- by default, does not process items with underscore '_'
---
--- @param table the table (object) to print
--- @param include a list of names to include
--- @param exclude a list of names to exclude
---
-local function printObject( table, include, exclude, params )
-	local indent = ""
-	local step = 0
-	local include = include or {}
-	local exclude = exclude or {}
-	local params = params or {}
-	local options = {
-		limit = 10,
-	}
-	opts = Utils.extend( params, options )
-
-	--print("Printing object table =============================")
-	function _print( t, ind, s )
-
-		-- limit number of rounds
-		if s > options.limit then return end
-
-		for k, v in pairs( t ) do
-			local ok_to_process = true
-
-			if Utils.propertyIn( include, k ) then
-				ok_to_process = true
-			elseif type( t[k] ) == "function" or
-				Utils.propertyIn( exclude, k ) or
-				type( k ) == "string" and k:sub(1,1) == '_' then
-				ok_to_process = false
-			end
-
-			if ok_to_process then
-
-				if type( t[ k ] ) == "table" then
-					local  o = t[ k ]
-					local address = tostring( o )
-					local items = #o
-					print ( ind .. k .. " --> " .. address .. " w " .. items .. " items" )
-					_print( t[ k ], ( ind .. "  " ), ( s + 1 ) )
-
-				else
-					if type( v ) == "string" then
-						print ( ind ..  k .. " = '" .. v .. "'" )
-					else
-						print ( ind ..  k .. " = " .. tostring( v ) )
-					end
-
-				end
-			end
-
-		end
-	end
-
-	-- start printing process
-	_print( table, indent, step + 1 )
-
-end
-
-
-
 --[[
-superCall( 'string', ... )
-superCall( Class, 'string', ... )
+obj:superCall( 'string', ... )
+obj:superCall( Class, 'string', ... )
 --]]
 
 -- superCall()
--- method to intelligently find
+-- method to intelligently find methods in object hierarchy
+--
 local function superCall( self, ... )
 	local args = {...}
 	local arg1 = args[1]
@@ -301,6 +243,7 @@ end
 -- @param v value
 --
 local function newindexFunc( t, k, v )
+	-- print( "newindexFunc", t, k, v )
 
 	local o, f
 
@@ -413,6 +356,7 @@ local function newClass( inheritance, params )
 	inheritance = inheritance or {}
 	params = params or {}
 	params.set_isClass = true
+	params.name = params.name or "<unnamed class>"
 	--==--
 	assert( type( inheritance ) == 'table', "first parameter should be nil, a Class, or a list of Classes" )
 
@@ -434,6 +378,9 @@ local function newClass( inheritance, params )
 	-- add Class property, access via getters:class()
 	o.__class = o 
 
+	-- add Class property, access via getters:NAME()
+	o.__name = params.name
+
 	return o
 
 end
@@ -452,8 +399,7 @@ end
 --====================================================================--
 
 
-ClassBase = newClass( nil )
-ClassBase.NAME = "Base Class"
+ClassBase = newClass( nil, { name="Base Class" } )
 
 ClassBase._PRINT_INCLUDE = {}
 ClassBase._PRINT_EXCLUDE = { '__dmc_super' }
@@ -473,13 +419,23 @@ function ClassBase:__create__( ... )
 end
 
 
-
 function ClassBase:__new__( ... )
 	-- print( "ClassBase:__new__", self )
 	--==--
 	return self
 end
 
+
+function ClassBase:__destroy__()
+	-- print( "ClassBase:__destroy__", self )
+	--==--
+end
+
+
+function ClassBase.__getters:NAME()
+	-- print( "ClassBase.__getters:NAME", self.__name )
+	return self.__name
+end
 
 
 function ClassBase.__getters:class()
@@ -541,7 +497,7 @@ function ClassBase:print( include, exclude )
 	local include = include or self._PRINT_INCLUDE
 	local exclude = exclude or self._PRINT_EXCLUDE
 
-	printObject( self, include, exclude )
+	Utils.printObject( self, include, exclude )
 end
 
 
@@ -593,8 +549,7 @@ ClassBase.superCall = superCall
 --====================================================================--
 
 
-ObjectBase = inheritsFrom( ClassBase )
-ObjectBase.NAME = "Object Base"
+ObjectBase = inheritsFrom( ClassBase, { name="Object Class" } )
 
 
 

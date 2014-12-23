@@ -45,22 +45,35 @@ local ObjectBase = Objects.ObjectBase
 
 describe( "Module Test: test Lua Object availability", function()
 
-	it( "has constructor function", function()
+	it( "has Class name", function()
 		assert( ClassBase.NAME == "Base Class" )
+		assert( ObjectBase.NAME == "Object Class" )
+	end)
+
+	it( "has constructor function", function()
 		assert( ClassBase.new ~= nil )
 		assert( type( ClassBase.new ) == 'function' )
+
+		assert( ObjectBase.new ~= nil )
+		assert( type( ObjectBase.new ) == 'function' )
 	end)
 
 	it( "has method isa", function()
 		assert( rawget( ClassBase, 'isa' ) ~= nil )
+
+		assert( ObjectBase.isa ~= nil )
+		assert( type( ObjectBase.isa ) == 'function' )
 	end)
 
 	it( "has constructor function", function()
 		assert( Objects.registerCtorName ~= nil )
+		assert( type( Objects.registerCtorName ) == 'function' )
+
+		assert( Objects.registerDtorName ~= nil )
+		assert( type( Objects.registerDtorName ) == 'function' )
 	end)
 
-	it( "contructor name must be string", function()
-
+	it( "has a string constructor name", function()
 		assert.are.equal( type( Objects.registerCtorName( 'blorf' ) ), 'function' )
 
 		assert.has.errors( function() Objects.registerCtorName() end )
@@ -68,9 +81,12 @@ describe( "Module Test: test Lua Object availability", function()
 		assert.has.errors( function() Objects.registerCtorName( {} ) end )
 	end)
 
-	it( "has destructor function", function()
-		assert( Objects.registerDtorName ~= nil )
-		assert.has.errors( function() Objects.registerCtorName( {} ) end )
+	it( "has a string destructor name", function()
+		assert.are.equal( type( Objects.registerDtorName( 'blorf' ) ), 'function' )
+
+		assert.has.errors( function() Objects.registerDtorName() end )
+		assert.has.errors( function() Objects.registerDtorName( 4 ) end )
+		assert.has.errors( function() Objects.registerDtorName( {} ) end )
 	end)
 
 end)
