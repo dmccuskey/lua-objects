@@ -363,14 +363,14 @@ end
 
 
 
--- newBless()
+-- blessObject()
 -- create new object, setup with Lua OO aspects, dmc-style aspects
 -- @params inheritance table of supers/parents (dmc-style objects)
 -- @params params
 -- params.object
 -- params.set_isClass
 --
-local function newBless( inheritance, params )
+local function blessObject( inheritance, params )
 	params = params or {}
 	params.object = params.object or {}
 	params.set_isClass = params.set_isClass == true and true or false
@@ -426,7 +426,7 @@ local function newClass( inheritance, params )
 		tinsert( inheritance, ClassBase )
 	end
 
-	local o = newBless( inheritance, {} )
+	local o = blessObject( inheritance, {} )
 
 	initializeObject( o, params )
 
@@ -467,7 +467,7 @@ function ClassBase:__create__( ... )
 		set_isClass = false
 	}
 	--==--
-	local o = newBless( { self.__class }, params )
+	local o = blessObject( { self.__class }, params )
 	initializeObject( o, params )
 
 	return o
