@@ -736,6 +736,6 @@ return {
 	registerDtorName = registerDtorName,
 	inheritsFrom = inheritsFrom,
 	newClass = newClass,
-	ClassBase = ClassBase,
-	ObjectBase = ObjectBase
+	Class = ClassBase,
+	Object = ObjectBase
 }

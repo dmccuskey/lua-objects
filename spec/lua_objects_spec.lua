@@ -33,8 +33,8 @@ local Objects = require 'lua_objects'
 local inheritsFrom = Objects.inheritsFrom
 local newClass = Objects.newClass
 
-local ClassBase = Objects.ClassBase
-local ObjectBase = Objects.ObjectBase
+local Class = Objects.Class
+local Object = Objects.Object
 
 
 
@@ -49,23 +49,23 @@ Test methods and such on items inside of Lua Objects
 describe( "Module Test: test Lua Object availability", function()
 
 	it( "has Class name", function()
-		assert( ClassBase.NAME == "Base Class" )
-		assert( ObjectBase.NAME == "Object Class" )
+		assert( Class.NAME == "Class Class" )
+		assert( Object.NAME == "Object Class" )
 	end)
 
 	it( "has constructor function", function()
-		assert( ClassBase.new ~= nil )
-		assert( type( ClassBase.new ) == 'function' )
+		assert( Class.new ~= nil )
+		assert( type( Class.new ) == 'function' )
 
-		assert( ObjectBase.new ~= nil )
-		assert( type( ObjectBase.new ) == 'function' )
+		assert( Object.new ~= nil )
+		assert( type( Object.new ) == 'function' )
 	end)
 
 	it( "has method isa", function()
-		assert( rawget( ClassBase, 'isa' ) ~= nil )
+		assert( rawget( Class, 'isa' ) ~= nil )
 
-		assert( ObjectBase.isa ~= nil )
-		assert( type( ObjectBase.isa ) == 'function' )
+		assert( Object.isa ~= nil )
+		assert( type( Object.isa ) == 'function' )
 	end)
 
 	it( "has ctor/dtor name functions", function()
@@ -121,7 +121,7 @@ describe( "Module Test: simplest class", function()
 
 		it( "is a subclass", function()
 			assert.are.equal( Class:isa( Class ), true )
-			assert.are.equal( Class:isa( ClassBase ), true )
+			assert.are.equal( Class:isa( Class ), true )
 
 			assert.are.equal( Class:isa( nil ), false )
 			assert.are.equal( Class:isa( {} ), false )
@@ -189,7 +189,7 @@ describe( "Module Test: single ineritance class", function()
 		it( "is not a table", function()
 			assert( Class:isa( Class ) == true )
 			assert( Class:isa( ParentClass ) == true )
-			assert( Class:isa( ClassBase ) == true )
+			assert( Class:isa( Class ) == true )
 
 			assert( Class:isa( nil ) == false )
 			assert( Class:isa( {} ) == false )
@@ -391,7 +391,7 @@ describe( "Module Test: class methods", function()
 		it( "Obj1 several parent classes", function()
 			assert( obj:isa( ClassA ) == true )
 			assert( obj:isa( ClassB ) == true )
-			assert( obj:isa( ClassBase ) == true )
+			assert( obj:isa( Class ) == true )
 
 			assert( obj:isa( nil ) == false )
 			assert( obj:isa( {} ) == false )
@@ -400,7 +400,7 @@ describe( "Module Test: class methods", function()
 		it( "Obj2 several parent classes", function()
 			assert( obj2:isa( ClassA ) == true )
 			assert( obj2:isa( ClassB ) == true )
-			assert( obj2:isa( ClassBase ) == true )
+			assert( obj2:isa( Class ) == true )
 
 			assert( obj2:isa( nil ) == false )
 			assert( obj2:isa( {} ) == false )
@@ -543,7 +543,7 @@ describe( "Module Test: class methods", function()
 	before_each( function()
 
 
-		ClassA = newClass( ObjectBase )
+		ClassA = newClass( Object )
 		ClassA.NAME = "Class A"
 
 		function ClassA:__init__( params )
@@ -608,7 +608,7 @@ describe( "Module Test: complex hierarchy", function()
 
 	before_each( function()
 
-		ClassZ = newClass( ObjectBase )
+		ClassZ = newClass( Object )
 		ClassZ.NAME = "Class Z"
 
 		function ClassZ:__init__( params )
@@ -640,7 +640,7 @@ describe( "Module Test: complex hierarchy", function()
 		end
 
 
-		ClassB = newClass( ObjectBase )
+		ClassB = newClass( Object )
 		ClassB.NAME = "Class B"
 
 		function ClassB:__init__( params )
