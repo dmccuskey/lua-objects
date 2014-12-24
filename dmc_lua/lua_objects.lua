@@ -445,7 +445,8 @@ local function newClass( inheritance, params )
 end
 
 
-
+-- backward compatibility
+--
 local function inheritsFrom( baseClass, options, constructor )
 	baseClass = baseClass == nil and baseClass or { baseClass }
 	return newClass( baseClass, options )
@@ -458,7 +459,7 @@ end
 --====================================================================--
 
 
-ClassBase = newClass( nil, { name="Base Class" } )
+ClassBase = newClass( nil, { name="Class Class" } )
 
 -- method, calls by 'new()' and other registrations
 --
@@ -474,12 +475,12 @@ function ClassBase:__ctor__( ... )
 	return o
 end
 
-
 -- method, calls by 'destroy()' and other registrations
 --
 function ClassBase:__dtor__()
 	self:__destroy__()
 end
+
 
 function ClassBase:__new__( ... )
 	return self
@@ -518,7 +519,6 @@ function ClassBase.__getters:is_instance()
 end
 
 
-
 function ClassBase:isa( the_class )
 
 	local isa = false
@@ -539,7 +539,6 @@ function ClassBase:isa( the_class )
 
 	return isa 
 end
-
 
 
 -- optimize()
@@ -713,7 +712,7 @@ ObjectBase._undoInitComplete = ObjectBase.__undoInitComplete__
 
 
 -- Setup Class Properties (function references)
-registerDtorName( 'removeSelf', ObjectBase )
+registerDtorName( 'removeSelf', ClassBase )
 
 
 
@@ -734,7 +733,7 @@ return {
 
 	registerCtorName = registerCtorName,
 	registerDtorName = registerDtorName,
-	inheritsFrom = inheritsFrom,
+	inheritsFrom = inheritsFrom, -- backwards compatibility
 	newClass = newClass,
 	Class = ClassBase,
 	Object = ObjectBase
