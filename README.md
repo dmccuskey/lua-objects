@@ -4,9 +4,9 @@ Advanced object oriented library for Lua (OOP)
 
 This library started out being used for mobile apps built with the Corona SDK. It was later separated into pure Lua and Corona modules (lua_objects, dmc_objects) so that pure Lua environments could benefit from the library, too (eg, Corovel).
 
-It has been used to create relatively large Lua module apps (60k LOC).
+It has been used to create relatively large Lua mobile apps (60k LOC).
 
-Features include:
+### Features ###
 
 * constructor/initialization/destructor
 * getters and setters
@@ -20,7 +20,7 @@ Features include:
 * unit tested
 
 
-Create Custom Class
+### Create Custom Class ###
 
 ```lua
 --== Import module
@@ -88,7 +88,7 @@ end
 ```
 
 
-*Create Class Instance*
+### Create Class Instance ###
 
 ```lua
 
@@ -124,7 +124,7 @@ account = nil
 ```
 
 
-Custom Constructor/Destructor
+### Custom Constructor/Destructor ###
 
 ```lua
 -- use 'create' instead of 'new'
