@@ -141,7 +141,7 @@ local function registerCtorName( name, class )
 	assert( type( name ) == 'string', "ctor name should be string" )
 	assert( class.is_class, "Class is not is_class" )
 
-	class[ name ] = class.__create__
+	class[ name ] = class.__ctor__
 	return class[ name ]
 end
 
@@ -154,7 +154,7 @@ local function registerDtorName( name, class )
 	assert( type( name ) == 'string', "dtor name should be string" )
 	assert( class.is_class, "Class is not is_class" )
 
-	class[ name ] = class.__destroy__
+	class[ name ] = class.__dtor__
 	return class[ name ]
 end
 
@@ -460,8 +460,9 @@ end
 
 ClassBase = newClass( nil, { name="Base Class" } )
 
-
-function ClassBase:__create__( ... )
+-- method, calls by 'new()' and other registrations
+--
+function ClassBase:__ctor__( ... )
 	local params = {
 		data = {...},
 		set_isClass = false
@@ -473,6 +474,12 @@ function ClassBase:__create__( ... )
 	return o
 end
 
+
+-- method, calls by 'destroy()' and other registrations
+--
+function ClassBase:__dtor__()
+	self:__destroy__()
+end
 
 function ClassBase:__new__( ... )
 	return self
