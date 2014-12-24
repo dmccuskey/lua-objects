@@ -389,7 +389,7 @@ local function blessObject( inheritance, params )
 	}
 	setmetatable( o, mt )
 
-	-- add Class property, access via getters:super()
+	-- add Class property, access via getters:supers()
 	o.__parents = inheritance
 
 	-- create lookup tables - setters, getters
@@ -499,7 +499,7 @@ function ClassBase.__getters:class()
 	return self.__class
 end
 
-function ClassBase.__getters:super()
+function ClassBase.__getters:supers()
 	return self.__parents
 end
 

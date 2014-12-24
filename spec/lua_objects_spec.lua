@@ -128,7 +128,7 @@ describe( "Module Test: simplest class", function()
 		end)
 
 		it( "has a parent", function()
-			assert.are.equal( #Class.super, 1 )
+			assert.are.equal( #Class.supers, 1 )
 		end)
 
 		it( "has property class", function()
