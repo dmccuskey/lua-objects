@@ -166,7 +166,7 @@ obj:superCall( Class, 'string', ... )
 local function superCall( self, ... )
 	local args = {...}
 	local arg1 = args[1]
-	assert( type(arg1)=='table' or type(arg1)=='string' )
+	assert( type(arg1)=='table' or type(arg1)=='string', "superCall arg not table or string" )
 	--==--
 	-- pick off arguments	
 	local parent_lock, method, params
