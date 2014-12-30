@@ -76,16 +76,6 @@ local ClassBase
 
 --== Start: copy from lua_utils ==--
 
-function Utils.createObjectCallback( object, method )
-	assert( object ~= nil, "missing object in Utils.createObjectCallback" )
-	assert( method ~= nil, "missing method in Utils.createObjectCallback" )
-	--==--
-	return function( ... )
-		return method( object, ... )
-	end
-end
-
-
 -- extend()
 -- Copy key/values from one table to another
 -- Will deep copy any value from first table which is itself a table.
@@ -577,11 +567,6 @@ function ClassBase:deoptimize()
 	end
 end
 
-
-
-function ClassBase:createCallback( method )
-	return Utils.createObjectCallback( self, method )	
-end
 
 
 -- Setup Class Properties (function references)
