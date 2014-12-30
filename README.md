@@ -2,9 +2,9 @@
 
 Advanced object oriented module for Lua (OOP)
 
-This single-file module started its life as [dmc-objects](https://github.com/dmccuskey/dmc-objects) and was used to create mobile apps built with the Corona SDK. It was later refactored into two files `lua_objects.lua` & `dmc_objects.lua` so that pure-Lua environments could benefit, too (eg, [lua-corovel](https://github.com/dmccuskey/lua-corovel).
+This single-file module started its life as [dmc-objects](https://github.com/dmccuskey/dmc-objects) and was used to create mobile apps built with the Corona SDK. It was later refactored into two files `lua_objects.lua` & `dmc_objects.lua` so that pure-Lua environments could benefit, too (eg, [lua-corovel](https://github.com/dmccuskey/lua-corovel)).
 
-This power-duo have been used to create relatively complex Lua mobile apps (~60k LOC) and clients for websockets and the WAMP-protocol.
+This power-duo have been used to create relatively complex Lua mobile apps (~60k LOC), clients for websockets and the WAMP-protocol, and countless others.
 
 
 ### Features ###
@@ -21,7 +21,7 @@ This power-duo have been used to create relatively complex Lua mobile apps (~60k
 
 #### Examples ####
 
-The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two sub-classes made for mobile development with the Corona SDK. These sub-classes show how you can take advantage of the power of `lua_objects.lua`:
+The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two sub-classes made for mobile development with the Corona SDK (`ObjectBase` & `CoronaBase`). These sub-classes show how you can take advantage of the power of `lua_objects.lua`:
 
 * custom initialization and teardown
 * custom constructor/destructor names
@@ -29,6 +29,8 @@ The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two
 
 
 ### Create Custom Class ###
+
+Here's a quick example showing how to create a custom class.
 
 ```lua
 --== Import module
@@ -94,6 +96,8 @@ end
 
 ### Create Class Instance ###
 
+And here's how to work with that class.
+
 ```lua
 
 -- Create instance
@@ -129,6 +133,8 @@ account = nil
 
 
 ### Custom Constructor/Destructor ###
+
+You can even customize the names used for construction and destruction.
 
 ```lua
 -- use 'create' instead of 'new'
