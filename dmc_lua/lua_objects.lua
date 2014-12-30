@@ -47,7 +47,7 @@ local VERSION = "1.0.0"
 --== Imports
 
 
-local has_events, EventsMixModule = pcall( require, 'lua_events_mix' )
+-- none
 
 
 
@@ -65,13 +65,8 @@ local tremove = table.remove
 -- table for copies from lua_utils
 local Utils = {}
 
-local EventsMix
-if has_events then 
-	EventsMix = EventsMixModule.EventsMix
-end
-
 -- forward declare
-local ClassBase, ObjectBase
+local ClassBase
 
 
 
@@ -595,146 +590,20 @@ ClassBase.superCall = superCall
 
 
 
---====================================================================--
---== Object Base Class
---====================================================================--
-
-
--- allow EventsMix to be optional
-
-local object_base_parents = { ClassBase }
-if EventsMix then tinsert( object_base_parents, EventsMix ) end
-
-ObjectBase = newClass( object_base_parents, { name="Object Class" } )
-
-
 
 --====================================================================--
---== Constructor
-
-
--- __new__()
--- this method drives the construction flow for DMC-style objects
--- typically, you won't override this
---
-function ObjectBase:__new__( ... )
-
-	--== Do setup sequence ==--
-
-	self:__init__( ... )
-
-	-- skip these if a Class object (ie, NOT an instance)
-	if rawget( self, '__is_class' ) == false then
-		self:__initComplete__()
-	end
-
-	return self
-end
-
-
--- __destroy__()
--- this method drives the destruction flow for DMC-style objects
--- typically, you won't override this
---
-function ObjectBase:__destroy__()
-
-	--== Do teardown sequence ==--
-
-	-- skip these if a Class object (ie, NOT an instance)
-	if rawget( self, '__is_class' ) == false then
-		self:__undoInitComplete__()
-	end
-
-	self:__undoInit__()
-end
-
-
-
---======================================================--
--- Start: Setup Lua Objects
-
--- _init()
--- initialize the object - setting the view
---
-function ObjectBase:__init__( params )
-	self:superCall( ClassBase, '__init__', params )
-	-- allow events mix to be optional
-	if EventsMix then 
-		self:superCall( EventsMix, '__init__', params )
-	end
-	--==--
-	-- OVERRIDE THIS
-end
--- backward compatibility
-ObjectBase._init = ObjectBase.__init__
-
--- _undoInit()
--- remove items added during _init()
---
-function ObjectBase:__undoInit__()
-	self:superCall( ClassBase, '__undoInit__' )
-end
--- backward compatibility
-ObjectBase._undoInit = ObjectBase.__undoInit__
-
-
--- _initComplete()
--- any setup after object is done with __init__
---
-function ObjectBase:__initComplete__()
-end
--- backward compatibility
-ObjectBase._initComplete = ObjectBase.__initComplete__
-
--- _undoInitComplete()
--- remove any items added during _initComplete()
---
-function ObjectBase:__undoInitComplete__()
-end
--- backward compatibility
-ObjectBase._undoInitComplete = ObjectBase.__undoInitComplete__
-
--- END: Setup Lua Objects
---======================================================--
-
-
-
+--== Lua Objects Exports
 --====================================================================--
---== Public Methods
 
-
--- none
-
-
-
---====================================================================--
---== Private Methods
-
-
--- Setup Class Properties (function references)
-registerDtorName( 'removeSelf', ClassBase )
-
-
-
---====================================================================--
---== Event Handlers
-
--- none
-
-
-
-
---====================================================================--
---= Lua Objects Exports
---====================================================================--
 
 return {
 	__superCall = superCall, -- for testing
 
 	registerCtorName = registerCtorName,
 	registerDtorName = registerDtorName,
+
 	inheritsFrom = inheritsFrom, -- backwards compatibility
 	newClass = newClass,
-	Class = ClassBase,
-	Object = ObjectBase
+
+	Class = ClassBase
 }
