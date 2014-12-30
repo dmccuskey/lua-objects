@@ -1,23 +1,31 @@
 ## lua-objects ##
 
-Advanced object oriented library for Lua (OOP)
+Advanced object oriented module for Lua (OOP)
 
-This library started out being used for mobile apps built with the Corona SDK. It was later separated into pure Lua and Corona modules (lua_objects, dmc_objects) so that pure Lua environments could benefit from the library, too (eg, Corovel).
+This single-file module started its life as [dmc-objects](https://github.com/dmccuskey/dmc-objects) and was used to create mobile apps built with the Corona SDK. It was later refactored into two files `lua_objects.lua` & `dmc_objects.lua` so that pure-Lua environments could benefit, too (eg, [lua-corovel](https://github.com/dmccuskey/lua-corovel).
 
-It has been used to create relatively large Lua mobile apps (60k LOC).
+This power-duo have been used to create relatively complex Lua mobile apps (~60k LOC) and clients for websockets and the WAMP-protocol.
+
 
 ### Features ###
 
-* constructor/initialization/destructor
+* **_new!_** customizable methods and names for constructor/destructor
+* **_new!_** multiple inheritance (all way to top level)
+* **_new!_** handles of ambiguities of inherited attributes
+* **_new!_** advanced support for mixins
 * getters and setters
-* multiple inheritance (all way to top level)
-* advanced support for mixins
-* event dispatch mixin (add/removeListener, dispatchEvent)
-* handles of ambiguities of inherited attributes
 * correctly handles missing methods on super classes
 * optimization (copy methods from super classes)
-* subclass built for Corona SDK (display objects) (dmc_objects)
-* unit tested
+* **_new!_** unit tested
+
+
+#### Examples ####
+
+The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two sub-classes made for mobile development with the Corona SDK. These sub-classes show how you can take advantage of the power of `lua_objects.lua`:
+
+* custom initialization and teardown
+* custom constructor/destructor names
+* custom Event mixin (add/removeListener/dispatchEvent) [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin)
 
 
 ### Create Custom Class ###
@@ -25,18 +33,17 @@ It has been used to create relatively large Lua mobile apps (60k LOC).
 ```lua
 --== Import module
 
-local Objects = require 'lua_objects'
+local Objects = require 'dmc_lua.lua_objects'
 
 
 --== Setup aliases, cleaner code
 
 local newClass = Objects.newClass
-local Object = Objects.Object
 
 
---== Create a class, single inheritance
+--== Create a class
 
-local AccountClass = newClass( Object )
+local AccountClass = newClass()
  
 
 --== Class Properties
@@ -44,21 +51,18 @@ local AccountClass = newClass( Object )
 AccountClass.DEFAULT_PATH = '/path/dir/'
 AccountClass.DEFAULT_AMOUNT = 100.45
 
-AccountClass.AMOUNT_CHANGED_EVENT = 'account_amount_changed_event'
 
+--== Class constructor/destructor
 
---== Class setup and teardown
-
--- setup controlled by new()
-function AccountClass:__init__( params )
-
+-- called from obj:new()
+function AccountClass:__new__( params )
+	params = params or {}
 	self._secure = params.secure or true 
 	self._amount = params.amount or self.DEFAULT_AMOUNT 
-
 end
 
--- teardown controlled by destroy()
-function AccountClass:__undoInit__()
+-- called from obj:destroy()
+function AccountClass:__destroy__()
 	self._secure = nil 
 	self._amount = nil 
 end
@@ -110,8 +114,8 @@ obj:deoptimize()
 
 -- Check class/object types 
 
-if Object.is_class then print( "is class" ) end 
-if obj:isa( Object ) then print( "is Object" ) end 
+if AccountClass.is_class then print( "is class" ) end 
+if obj:isa( AccountClass ) then print( "is AccountClass" ) end 
 if obj.is_class then print( "is class" ) end 
 if obj.is_instance then print( "is instance" ) end 
 
@@ -138,5 +142,3 @@ registerCtorName( 'create' )
 registerDtorName( 'removeSelf' )
 
 ```
-
-
