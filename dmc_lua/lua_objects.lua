@@ -456,7 +456,8 @@ end
 
 ClassBase = newClass( nil, { name="Class Class" } )
 
--- method, calls by 'new()' and other registrations
+-- __ctor__ method
+-- called by 'new()' and other registrations
 --
 function ClassBase:__ctor__( ... )
 	local params = {
@@ -470,7 +471,8 @@ function ClassBase:__ctor__( ... )
 	return o
 end
 
--- method, calls by 'destroy()' and other registrations
+-- __dtor__ method
+-- called by 'destroy()' and other registrations
 --
 function ClassBase:__dtor__()
 	self:__destroy__()
