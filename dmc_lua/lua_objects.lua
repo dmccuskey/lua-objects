@@ -361,9 +361,13 @@ local function blessObject( inheritance, params )
 	params.set_isClass = params.set_isClass == true and true or false
 	--==--
 	local o = params.object
+	local o_id = tostring(o)
 	local mt = {
 		__index = multiindexFunc,
 		__newindex = newindexFunc,
+		__tostring = function(obj)
+			return obj:__tostring__(o_id)
+		end,
 		__call = function( obj, ... )
 			local p = {
 				data={...},
@@ -471,6 +475,11 @@ end
 
 function ClassBase:__new__( ... )
 	return self
+end
+
+
+function ClassBase:__tostring__( id )
+	return tostring(self.NAME) .. " " .. id
 end
 
 
