@@ -593,6 +593,7 @@ ClassBase.superCall = superCall
 
 
 return {
+	__version = VERSION,
 	__superCall = superCall, -- for testing
 
 	registerCtorName = registerCtorName,
