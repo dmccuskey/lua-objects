@@ -68,7 +68,7 @@ end
 --== Class getters/setters
 
 function AccountClass.__setters:secure( value )
-	if type( value ) ~= 'boolean' then return end 
+	assert( type(value)=='boolean', "property 'secure' must be boolean" )
 	self._secure = value
 end
 function AccountClass.__getters:secure()
