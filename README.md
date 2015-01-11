@@ -38,11 +38,6 @@ Here's a quick example showing how to create a custom class.
 local Objects = require 'dmc_lua.lua_objects'
 
 
---== Setup aliases, cleaner code
-
-local newClass = Objects.newClass
-
-
 --== Create a class
 
 local AccountClass = newClass()
