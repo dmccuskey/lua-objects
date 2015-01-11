@@ -39,7 +39,7 @@ SOFTWARE.
 
 -- Semantic Versioning Specification: http://semver.org/
 
-local VERSION = "1.1.2"
+local VERSION = "1.1.3"
 
 
 
@@ -158,13 +158,13 @@ local function superCall( self, ... )
 	local arg1 = args[1]
 	assert( type(arg1)=='table' or type(arg1)=='string', "superCall arg not table or string" )
 	--==--
-	-- pick off arguments	
+	-- pick off arguments
 	local parent_lock, method, params
 
-	if type(arg1) == 'table' then 
+	if type(arg1) == 'table' then
 		parent_lock = tremove( args, 1 )
 		method = tremove( args, 1 )
-	else  
+	else
 		method = tremove( args, 1 )
 	end
 	params = args
@@ -182,14 +182,14 @@ local function superCall( self, ... )
 	function findMethod( classes, name, lock )
 		local cls = nil
 		for _, class in ipairs( classes ) do
-			if not lock or class == lock then 
+			if not lock or class == lock then
 				if rawget( class, name ) then
-					cls = class 
+					cls = class
 					break
 				else
 					-- check parents for method
 					cls = findMethod( class.__parents, name )
-					if cls then break end 
+					if cls then break end
 				end
 			end
 		end
@@ -221,7 +221,7 @@ local function superCall( self, ... )
 		tremove( self_dmc_super, # self_dmc_super )
 	end
 
-	-- this is the first iteration and last 
+	-- this is the first iteration and last
 	-- so clean up callstack, etc
 	--
 	if super_flag == false then
@@ -272,7 +272,7 @@ local function initializeObject( obj, params )
 	end
 	rawset( obj, '__parent_lock', nil )
 
-	return obj 
+	return obj
 end
 
 
@@ -411,10 +411,10 @@ local function newClass( inheritance, params )
 	-- wrap single-class into table list
 	-- testing for DMC-Style objects
 	-- TODO: see if we can test for other Class libs
-	-- 
+	--
 	if inheritance.is_class == true then
 		inheritance = { inheritance }
-	elseif ClassBase and #inheritance == 0 then 
+	elseif ClassBase and #inheritance == 0 then
 		-- add default base Class
 		tinsert( inheritance, ClassBase )
 	end
@@ -424,7 +424,7 @@ local function newClass( inheritance, params )
 	initializeObject( o, params )
 
 	-- add Class property, access via getters:class()
-	o.__class = o 
+	o.__class = o
 
 	-- add Class property, access via getters:NAME()
 	o.__name = params.name
@@ -518,14 +518,14 @@ end
 function ClassBase:isa( the_class )
 
 	local isa = false
-	local cur_class = self.class 
+	local cur_class = self.class
 
 	-- test self
-	if cur_class == the_class then 
-		isa = true 
+	if cur_class == the_class then
+		isa = true
 
 	-- test parents
-	else 
+	else
 		local parents = self.__parents
 		for i=1, #parents do
 			isa = parents[i]:isa( the_class )
@@ -533,7 +533,7 @@ function ClassBase:isa( the_class )
 		end
 	end
 
-	return isa 
+	return isa
 end
 
 

@@ -13,7 +13,7 @@ package.path = './dmc_lua/?.lua;' .. package.path
 
 -- Semantic Versioning Specification: http://semver.org/
 
-local VERSION = "0.2.0"
+local VERSION = "0.2.1"
 
 
 
@@ -79,7 +79,7 @@ describe( "Module Test: simplest class", function()
 	end)
 
 	after_each( function()
-		Class = nil 
+		Class = nil
 	end)
 
 	describe( "Test: simplest class elements", function()
@@ -143,7 +143,7 @@ describe( "Module Test: single ineritance class", function()
 	end)
 
 	after_each( function()
-		Class = nil 
+		Class = nil
 	end)
 
 	describe( "Test: simplest class elements", function()
@@ -199,7 +199,7 @@ Test simple-inheritance class methods
 describe( "Module Test: class methods", function()
 
 	local ClassA
-	local obj, obj2 
+	local obj, obj2
 
 	setup( function()
 	end)
@@ -224,8 +224,8 @@ describe( "Module Test: class methods", function()
 	end)
 
 	after_each( function()
-		ClassA = nil 
-		obj = nil 
+		ClassA = nil
+		obj = nil
 	end)
 
 
@@ -318,7 +318,7 @@ describe( "Module Test: class methods", function()
 	end)
 
 	after_each( function()
-		ClassA, ClassB = nil, nil 
+		ClassA, ClassB = nil, nil
 		obj, obj2 = nil, nil
 	end)
 
@@ -430,7 +430,7 @@ describe( "Module Test: class methods", function()
 
 		function ClassB:three( num )
 			-- local val = self:superCall( 'three', num )
-			local val = num 
+			local val = num
 			return val * 3
 		end
 
@@ -481,7 +481,7 @@ describe( "Module Test: class methods", function()
 	end)
 
 	after_each( function()
-		ClassA, ClassB, ClassC, ClassD = nil, nil, nil, nil 
+		ClassA, ClassB, ClassC, ClassD = nil, nil, nil, nil
 		obj, obj2 = nil, nil
 	end)
 
