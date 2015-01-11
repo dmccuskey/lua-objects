@@ -11,7 +11,7 @@ This power-duo have been used to create relatively complex Lua mobile apps (~60k
 
 * **_new!_** customizable methods and names for constructor/destructor
 * **_new!_** multiple inheritance (all way to top level)
-* **_new!_** handles of ambiguities of inherited attributes
+* **_new!_** handles ambiguities of inherited attributes
 * **_new!_** advanced support for mixins
 * getters and setters
 * correctly handles missing methods on super classes
