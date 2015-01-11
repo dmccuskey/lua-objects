@@ -30,9 +30,6 @@ local Objects = require 'lua_objects'
 
 
 -- setup some aliases to make code cleaner
-local inheritsFrom = Objects.inheritsFrom
-local newClass = Objects.newClass
-
 local Class = Objects.Class
 local Object = Objects.Object
 
@@ -59,6 +56,10 @@ describe( "Module Test: test Lua Object availability", function()
 
 	it( "has method isa", function()
 		assert( rawget( Class, 'isa' ) ~= nil )
+	end)
+
+	it( "has newClass access", function()
+		assert( Objects.newClass == _G.newClass, "mismatch of newClass() functions" )
 	end)
 
 end)
