@@ -19,16 +19,9 @@ This power-duo have been used to create relatively complex Lua mobile apps (~60k
 * **_new!_** unit tested
 
 
-#### Examples ####
+### Examples ###
 
-The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two sub-classes made for mobile development with the Corona SDK (`ObjectBase` & `CoronaBase`). These sub-classes show how you can take advantage of the power of `lua_objects.lua`:
-
-* custom initialization and teardown
-* custom constructor/destructor names
-* custom Event mixin (add/removeListener/dispatchEvent) [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin)
-
-
-### Create Custom Class ###
+#### A Simple Custom Class ####
 
 Here's a quick example showing how to create a custom class.
 
@@ -113,10 +106,12 @@ obj:deoptimize()
 
 -- Check class/object types 
 
-if AccountClass.is_class then print( "is class" ) end 
-if obj:isa( AccountClass ) then print( "is AccountClass" ) end 
-if obj.is_class then print( "is class" ) end 
-if obj.is_instance then print( "is instance" ) end 
+assert( AccountClass.is_class == true ), "AccountClass is a class" )
+assert( AccountClass.is_instance == false ), "AccountClass is not an instance" )
+
+assert( obj.is_class == false, "an object instance is not a class" ) 
+assert( obj.is_instance == true, "an objects is an instance of a class" )
+assert( obj:isa( AccountClass ) == true, "this obj is an instance of AccountClass" )
 
 
 -- Destroy instance
@@ -126,6 +121,15 @@ account = nil
 
 ```
 
+#### More, Advanced Examples ####
+
+The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two `lua-objects` sub-classes made for mobile development (`ObjectBase` & `ComponentBase`). These sub-classes show how to get more out of `lua_objects`, such as:
+
+* custom initialization and teardown
+* custom constructor/destructor names
+* custom Event mixin (add/removeListener/dispatchEvent) [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin)
+
+
 
 ### Custom Constructor/Destructor ###
 
@@ -133,7 +137,7 @@ You can even customize the names used for construction and destruction.
 
 ```lua
 -- use 'create' instead of 'new'
--- eg,  Class:create{ secure=true, amount=94.32 }
+-- eg,  MyClass:create{ secure=true, amount=94.32 }
 --
 registerCtorName( 'create' )
 
