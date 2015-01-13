@@ -1,9 +1,11 @@
---[[
-Unit Testing for lua_objects using Busted
---]]
+--====================================================================--
+-- spec/lua_objects_spec.lua
+--
+-- Testing for lua-objects using Busted
+--====================================================================--
+
 
 package.path = './dmc_lua/?.lua;' .. package.path
-
 
 
 --====================================================================--
