@@ -131,7 +131,7 @@ local function registerCtorName( name, class )
 end
 
 -- registerDtorName
--- add names for the constructor
+-- add names for the destructor
 --
 local function registerDtorName( name, class )
 	class = class or ClassBase
