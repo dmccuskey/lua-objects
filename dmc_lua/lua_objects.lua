@@ -368,12 +368,8 @@ local function blessObject( inheritance, params )
 		__tostring = function(obj)
 			return obj:__tostring__(o_id)
 		end,
-		__call = function( obj, ... )
-			local p = {
-				data={...},
-				set_isClass=false
-			}
-			return initializeObject( obj, p )
+		__call = function( cls, ... )
+			return cls:__ctor__( ... )
 		end
 	}
 	setmetatable( o, mt )

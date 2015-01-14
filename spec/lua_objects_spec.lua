@@ -202,6 +202,7 @@ describe( "Module Test: class methods", function()
 
 	local ClassA
 	local obj, obj2
+	local p
 
 	setup( function()
 	end)
@@ -212,6 +213,12 @@ describe( "Module Test: class methods", function()
 	before_each( function()
 		ClassA = newClass()
 
+		function ClassA:__new__( params )
+			params = params or {}
+			self:superCall( '__new__', params )
+			self._params = params
+		end
+
 		function ClassA:one( num )
 			return num
 		end
@@ -220,14 +227,17 @@ describe( "Module Test: class methods", function()
 			return num * 2
 		end
 
-		obj = ClassA:new()
-		obj2 = ClassA()
+		p = {one=1}
+
+		obj = ClassA:new( p )
+		obj2 = ClassA( p )
 
 	end)
 
 	after_each( function()
 		ClassA = nil
 		obj = nil
+		p = nil
 	end)
 
 
@@ -254,6 +264,11 @@ describe( "Module Test: class methods", function()
 
 			assert.are.equal( obj2:one( 4 ), 4 )
 			assert.are.equal( obj2:two( 4 ), 8 )
+		end)
+
+		it( "has properties", function()
+			assert.are.equal( obj._params, p )
+			assert.are.equal( obj2._params, p )
 		end)
 
 	end)
