@@ -11,7 +11,7 @@ This power-duo have been used to create relatively complex Lua mobile apps (~60k
 
 * **_new!_** customizable methods and names for constructor/destructor
 * **_new!_** multiple inheritance (all way to top level)
-* **_new!_** handles of ambiguities of inherited attributes
+* **_new!_** handles ambiguities of inherited attributes
 * **_new!_** advanced support for mixins
 * getters and setters
 * correctly handles missing methods on super classes
@@ -19,16 +19,9 @@ This power-duo have been used to create relatively complex Lua mobile apps (~60k
 * **_new!_** unit tested
 
 
-#### Examples ####
+### Examples ###
 
-The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two sub-classes made for mobile development with the Corona SDK (`ObjectBase` & `CoronaBase`). These sub-classes show how you can take advantage of the power of `lua_objects.lua`:
-
-* custom initialization and teardown
-* custom constructor/destructor names
-* custom Event mixin (add/removeListener/dispatchEvent) [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin)
-
-
-### Create Custom Class ###
+#### A Simple Custom Class ####
 
 Here's a quick example showing how to create a custom class.
 
@@ -36,11 +29,6 @@ Here's a quick example showing how to create a custom class.
 --== Import module
 
 local Objects = require 'dmc_lua.lua_objects'
-
-
---== Setup aliases, cleaner code
-
-local newClass = Objects.newClass
 
 
 --== Create a class
@@ -73,7 +61,7 @@ end
 --== Class getters/setters
 
 function AccountClass.__setters:secure( value )
-	if type( value ) ~= 'boolean' then return end 
+	assert( type(value)=='boolean', "property 'secure' must be boolean" )
 	self._secure = value
 end
 function AccountClass.__getters:secure()
@@ -94,7 +82,7 @@ end
 ```
 
 
-### Create Class Instance ###
+#### Create Class Instance ####
 
 And here's how to work with that class.
 
@@ -118,10 +106,12 @@ obj:deoptimize()
 
 -- Check class/object types 
 
-if AccountClass.is_class then print( "is class" ) end 
-if obj:isa( AccountClass ) then print( "is AccountClass" ) end 
-if obj.is_class then print( "is class" ) end 
-if obj.is_instance then print( "is instance" ) end 
+assert( AccountClass.is_class == true ), "AccountClass is a class" )
+assert( AccountClass.is_instance == false ), "AccountClass is not an instance" )
+
+assert( obj.is_class == false, "an object instance is not a class" ) 
+assert( obj.is_instance == true, "an objects is an instance of a class" )
+assert( obj:isa( AccountClass ) == true, "this obj is an instance of AccountClass" )
 
 
 -- Destroy instance
@@ -131,6 +121,15 @@ account = nil
 
 ```
 
+#### More, Advanced Examples ####
+
+The project [dmc-objects](https://github.com/dmccuskey/dmc-objects) contains two `lua-objects` sub-classes made for mobile development (`ObjectBase` & `ComponentBase`). These sub-classes show how to get more out of `lua_objects`, such as:
+
+* custom initialization and teardown
+* custom constructor/destructor names
+* custom Event mixin (add/removeListener/dispatchEvent) [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin)
+
+
 
 ### Custom Constructor/Destructor ###
 
@@ -138,7 +137,7 @@ You can even customize the names used for construction and destruction.
 
 ```lua
 -- use 'create' instead of 'new'
--- eg,  Class:create{ secure=true, amount=94.32 }
+-- eg,  MyClass:create{ secure=true, amount=94.32 }
 --
 registerCtorName( 'create' )
 
