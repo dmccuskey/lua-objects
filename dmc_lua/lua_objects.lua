@@ -215,6 +215,9 @@ local function superCall( self, ... )
 	-- call method if found
 	--
 	c = self_dmc_super[ # self_dmc_super ]
+	-- TODO: when c==nil
+	-- if c==nil or type(c)~='table' then return end
+
 	s = findMethod( c.__parents, method, parent_lock )
 	if s then
 		tinsert( self_dmc_super, s )
