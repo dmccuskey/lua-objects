@@ -180,6 +180,7 @@ local function superCall( self, ... )
 	-- @params lock Class object with which to constrain searching
 	--
 	function findMethod( classes, name, lock )
+		if not classes then return end -- when using mixins, etc
 		local cls = nil
 		for _, class in ipairs( classes ) do
 			if not lock or class == lock then
