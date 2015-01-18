@@ -510,6 +510,10 @@ function ClassBase.__getters:is_instance()
 	return not self.__is_class
 end
 
+function ClassBase.__getters:version()
+	return self.__version
+end
+
 
 function ClassBase:isa( the_class )
 
