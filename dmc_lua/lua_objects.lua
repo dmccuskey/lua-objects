@@ -267,6 +267,7 @@ local function initializeObject( obj, params )
 	local parents = obj.__parents
 	for i = #parents, 1, -1 do
 		local parent = parents[i]
+		assert( parent, "Lua Objects: parent is nil, check parent list" )
 
 		rawset( obj, '__parent_lock', parent )
 		if parent.__new__ then
