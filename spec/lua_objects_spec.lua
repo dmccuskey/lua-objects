@@ -139,9 +139,9 @@ describe( "Module Test: single ineritance class", function()
 	local ParentClass, Class
 
 	before_each( function()
-		ParentClass = newClass( {}, {} )
+		ParentClass = newClass( {}, {name='Parent'} )
 
-		Class = newClass( ParentClass )
+		Class = newClass( ParentClass, {name='Class'} )
 	end)
 
 	after_each( function()
