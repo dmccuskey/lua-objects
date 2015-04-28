@@ -13,7 +13,10 @@ module_config = {
 		"files": [
 			"lua_objects.lua"
 		],
-		"requires": []
+		"requires": [
+			"lua-events-mixin",
+			"lua-class"
+		]
 	},
 	"tests": {
 		"dir": "spec",
