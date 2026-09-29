@@ -1,6 +1,6 @@
 # API Reference
 
-Everything lua-objects adds to [lua-class](https://github.com/dmccuskey/lua-class), as of version 1.4.0. For `newClass()`, the class members (`new()`, `superCall()`, `isa()`, ...), getters and setters, and multiple inheritance, see the [lua-class API reference](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md).
+Everything lua-objects adds to [lua-class](https://github.com/dmccuskey/lua-class), as of version 1.4.1. For `newClass()`, the class members (`new()`, `superCall()`, `isa()`, ...), getters and setters, and multiple inheritance, see the [lua-class API reference](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md).
 
 | name | what it is |
 |---|---|
@@ -23,12 +23,12 @@ It returns a table holding lua-class's module fields, with two of its own:
 | field | |
 |---|---|
 | `Objects.ObjectBase` | [`ObjectBase`](#objectbase) |
-| `Objects.__version` | lua-objects' version, `1.4.0` |
+| `Objects.__version` | lua-objects' version, `1.4.1` |
 | `Objects.newClass`, `Objects.Class`, `Objects.registerCtorName`, ... | from lua-class ([The Module](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#the-module)) |
 
 Loading it also:
 
-- sets the global `newClass`, as lua-class does;
+- sets the global `newClass`, as lua-class does (lua-objects itself doesn't use it, so it loads after `setNewClassGlobal( false )`);
 - adds `removeSelf()` as another name for `destroy()` on the root class, so every class has it, whether or not it inherits from `ObjectBase`.
 
 ## ObjectBase
@@ -116,6 +116,6 @@ The events mixin can also be used on its own, without lua-class; see [lua-events
 
 ## Known Issues
 
-None of its own. Version 1.4.0 fixed those of 1.3.0: each class had a list of listeners, which an instance without its own (its `__init__()` skipped `superCall()`, or it was removed) shared with other instances; `removeEventListener()` raised an error when nothing listened to the name (fixed in [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin) 0.3.0); `Objects.__version` was lua-class's.
+None of its own. Version 1.4.1 loads with lua-class's global `newClass` turned off (`setNewClassGlobal( false )`); 1.4.0 needed it. Version 1.4.0 fixed those of 1.3.0: each class had a list of listeners, which an instance without its own (its `__init__()` skipped `superCall()`, or it was removed) shared with other instances; `removeEventListener()` raised an error when nothing listened to the name (fixed in [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin) 0.3.0); `Objects.__version` was lua-class's.
 
 The known issues of the class model are listed in [lua-class](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#known-issues).

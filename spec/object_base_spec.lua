@@ -70,7 +70,7 @@ end
 describe( "The module", function()
 
 	it( "exports its own version", function()
-		assert.are.equal( '1.4.0', Objects.__version )
+		assert.are.equal( '1.4.1', Objects.__version )
 	end)
 
 	it( "exports lua-class's functions and ObjectBase", function()
