@@ -1,6 +1,6 @@
 # API Reference
 
-Everything lua-objects adds to [lua-class](https://github.com/dmccuskey/lua-class), as of version 1.3.0. For `newClass()`, the class members (`new()`, `superCall()`, `isa()`, ...), getters and setters, and multiple inheritance, see the [lua-class API reference](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md).
+Everything lua-objects adds to [lua-class](https://github.com/dmccuskey/lua-class), as of version 1.4.0. For `newClass()`, the class members (`new()`, `superCall()`, `isa()`, ...), getters and setters, and multiple inheritance, see the [lua-class API reference](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md).
 
 | name | what it is |
 |---|---|
@@ -18,11 +18,12 @@ local Objects = require 'lua_objects'
 
 `lua_objects.lua` loads `lua_class` and `lua_events_mix` by those names, so the folder that holds all three has to be on `package.path` (the [Quick Start](../README.md#2-write-a-class-that-sends-events) shows how). In [DMC-Lua-Library](https://github.com/dmccuskey/DMC-Lua-Library) and the Solar2D libraries they are in `lib/dmc_lua/`.
 
-It returns lua-class's module table, with one field added:
+It returns a table holding lua-class's module fields, with two of its own:
 
 | field | |
 |---|---|
 | `Objects.ObjectBase` | [`ObjectBase`](#objectbase) |
+| `Objects.__version` | lua-objects' version, `1.4.0` |
 | `Objects.newClass`, `Objects.Class`, `Objects.registerCtorName`, ... | from lua-class ([The Module](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#the-module)) |
 
 Loading it also:
@@ -74,11 +75,11 @@ function Account:__undoInit__()
 end
 ```
 
-`ObjectBase:__init__()` gives the object its own list of listeners, and `ObjectBase:__undoInit__()` removes it. An `__init__()` that doesn't call it raises no error, but the object then uses its class's list (see below), shared with every other such instance: a listener added to one receives the events of all of them.
+`ObjectBase:__init__()` gives the object its own list of listeners, and `ObjectBase:__undoInit__()` removes it. If a class's `__init__()` doesn't call it, `new()` raises an error: `ObjectBase: Account's __init__() must call self:superCall( '__init__', ... )`.
 
-Creating a class runs `__init__()` too, on the class, without arguments (lua-class runs each parent's constructor on a new class, see [newClass](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#newclass)). So `__init__()` has to accept no arguments (`params = params or {}`). The `__initComplete__()` hooks run only for instances.
+Creating a class runs `__init__()` too, on the class, without arguments (lua-class runs each parent's constructor on a new class, see [newClass](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#newclass)). So `__init__()` has to accept no arguments (`params = params or {}`). On a class, `ObjectBase:__init__()` does nothing: a class has no list of listeners, so it can't send or receive events. The `__initComplete__()` hooks run only for instances.
 
-`removeSelf()` doesn't empty the object. After it, fields that `__undoInit__()` cleared read the class's values, if the class has them; that includes the class's list of listeners, so don't use an object's events after removing it.
+`removeSelf()` doesn't empty the object. After it, fields that `__undoInit__()` cleared read the class's values, if the class has them. Its events are gone: adding a listener or sending an event raises an error.
 
 ## Events
 
@@ -101,7 +102,7 @@ Account.BALANCE_CHANGED = 'balance_changed'
 | member | |
 |---|---|
 | `obj:addEventListener( name, listener )` | `listener` is a function, called with the event, or a table with a method named `name`, called as `listener:name( event )`. Adding the same listener twice prints a warning and keeps one. |
-| `obj:removeEventListener( name, listener )` | removes it |
+| `obj:removeEventListener( name, listener )` | removes it; a listener that isn't there prints a warning |
 | `obj:dispatchEvent( type, data, params )` | sends `{ name=obj.EVENT, type=type, data=data, target=obj }`. With `params.merge = true` and a table `data`, the fields of `data` go into the event itself instead (`event.balance`, not `event.data.balance`). |
 | `obj:dispatchRawEvent( event )` | sends `event` unchanged, to the listeners of `event.name`; it needs a `name` |
 | `obj:createEvent( type, data, params )` | returns the event `dispatchEvent()` would send, without sending it |
@@ -109,13 +110,12 @@ Account.BALANCE_CHANGED = 'balance_changed'
 | `obj:setEventFunc( func )` | replaces the function that builds events for `dispatchEvent()`. It is called as `func( obj, ... )` with `dispatchEvent()`'s arguments and returns the event. |
 | `obj.EVENT` | the event name used by `dispatchEvent()`; default `event_mix_event` |
 
-Listeners are called in no particular order, and the dispatch is synchronous: `dispatchEvent()` returns after every listener has run. `setDebug( true )` is accepted but has no effect.
+Listeners are called in no particular order, and the dispatch is synchronous: `dispatchEvent()` returns after every listener has run. A listener added during a dispatch is called from the next one; one removed during a dispatch, before its turn, isn't called. `obj:setDebug( true )` prints each event dispatched.
 
 The events mixin can also be used on its own, without lua-class; see [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin).
 
 ## Known Issues
 
-- **Each class has a list of listeners of its own**, from the `__init__()` that runs when the class is created. An instance whose own list is missing (its `__init__()` skipped `superCall()`, or it was removed) adds to and sends from the class's list, shared with other instances. See [Setup and Teardown](#setup-and-teardown).
-- **`removeEventListener()` for a name that has no listeners** prints `WARNING:: Events:removeEventListener, no listeners found` and then raises an error. Remove only listeners you added.
-- `Objects.__version` is lua-class's version (0.1.0); lua-objects doesn't export its own.
-- The known issues of the class model are listed in [lua-class](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#known-issues).
+None of its own. Version 1.4.0 fixed those of 1.3.0: each class had a list of listeners, which an instance without its own (its `__init__()` skipped `superCall()`, or it was removed) shared with other instances; `removeEventListener()` raised an error when nothing listened to the name (fixed in [lua-events-mixin](https://github.com/dmccuskey/lua-events-mixin) 0.3.0); `Objects.__version` was lua-class's.
+
+The known issues of the class model are listed in [lua-class](https://github.com/dmccuskey/lua-class/blob/master/docs/api.md#known-issues).
