@@ -22,11 +22,11 @@ busted spec
 ```
 
 ```text
-++++++++++++++++++++++++++
-39 successes / 0 failures / 0 errors / 0 pending : 0.007882 seconds
+++++++++++++++++++++++++++++++++++++++++
+40 successes / 0 failures / 0 errors / 0 pending : 0.008573 seconds
 ```
 
-`object_base_spec.lua` tests `ObjectBase`: the module's exports, the order of the hooks, errors from an `__init__()` that skips `superCall()`, and events. `lua_objects_spec.lua` is lua-class's spec, run through `lua_objects`: it tests the class model.
+`object_base_spec.lua` tests `ObjectBase`: the module's exports, the order of the hooks, errors from an `__init__()` that skips `superCall()`, and events. `lua_objects_spec.lua` is lua-class's spec, run through `lua_objects`: it tests the class model. `no_global_spec.lua` loads the module with lua-class's global `newClass` turned off.
 
 ## Possible Future Changes
 

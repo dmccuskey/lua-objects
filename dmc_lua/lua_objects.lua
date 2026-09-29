@@ -39,7 +39,7 @@ SOFTWARE.
 
 -- Semantic Versioning Specification: http://semver.org/
 
-local VERSION = "1.4.0"
+local VERSION = "1.4.1"
 
 
 
@@ -77,7 +77,7 @@ registerDtorName( 'removeSelf', Class )
 --====================================================================--
 
 
-local ObjectBase = newClass( { Class, EventsMix }, { name="Object Base" } )
+local ObjectBase = ClassModule.newClass( { Class, EventsMix }, { name="Object Base" } )
 
 
 
