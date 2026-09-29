@@ -15,7 +15,7 @@ Only `dmc_lua/lua_objects.lua` is written in this repository. The other two file
 
 ## Testing
 
-The tests are in `spec/lua_objects_spec.lua` and use [busted](https://lunarmodules.github.io/busted/) under Lua 5.1 (`luarocks install busted`). From the repository's root folder:
+The tests are in `spec/` and use [busted](https://lunarmodules.github.io/busted/) under Lua 5.1 (`luarocks install busted`). From the repository's root folder:
 
 ```sh
 busted spec
@@ -23,14 +23,11 @@ busted spec
 
 ```text
 ++++++++++++++++++++++++++
-26 successes / 0 failures / 0 errors / 0 pending : 0.00689 seconds
+39 successes / 0 failures / 0 errors / 0 pending : 0.007882 seconds
 ```
 
-The file is lua-class's spec, run through `lua_objects`: it tests the class model, not `ObjectBase`, its hooks or its events.
+`object_base_spec.lua` tests `ObjectBase`: the module's exports, the order of the hooks, errors from an `__init__()` that skips `superCall()`, and events. `lua_objects_spec.lua` is lua-class's spec, run through `lua_objects`: it tests the class model.
 
 ## Possible Future Changes
 
-Each needs discussion and a concrete use case before it is worked on.
-
-- Tests for `ObjectBase`: the order of the hooks, events, and `removeSelf()`.
-- Export lua-objects' own version (`VERSION` in `lua_objects.lua` is `1.3.0`).
+None planned.

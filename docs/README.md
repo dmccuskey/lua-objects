@@ -30,5 +30,6 @@ dmc_lua/
 └── lua_events_mix.lua      from lua-events-mixin (copy)
 Snakefile                   build rules, for DMC-Lua-Library
 spec/
-└── lua_objects_spec.lua    tests (busted)
+├── object_base_spec.lua    tests of ObjectBase (busted)
+└── lua_objects_spec.lua    tests of the class model
 ```
