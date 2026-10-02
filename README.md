@@ -31,7 +31,7 @@ account:deposit( 25 )
 
 ## Quick Start
 
-This writes a class that sends events, creates an instance and removes it, in about 5 minutes, on macOS or Linux.
+The following code will get you up and running in about 5 minutes with Lua 5.1 on macOS or Linux. It writes a class that sends events, creates an instance and removes it.
 
 Prerequisites: Lua 5.1 (`lua -v` shows `Lua 5.1.x`) and git.
 
